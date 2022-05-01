@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, abort
 import os
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert
 from config import Config
 
@@ -30,10 +31,10 @@ def uploaded_files():
     print(filename)
     uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
 
-    photo_url = str(filename + "/uploads")
+    photo_url = str( "uploads/" + filename)
 
-    insert(Photo)
-    values(url=photo_url)
+    stmt = (insert(Photo).values(url=photo_url))
+    
 
 
     if request.form.get('landscape'):
