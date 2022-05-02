@@ -5,9 +5,13 @@ from sqlalchemy import insert
 from config import Config
 
 app = Flask(__name__)
+db = SQLAlchemy(app)
 app.config.from_object(Config)
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'uploads'
+
+
+import models
 
 #home page route
 @app.route('/', methods=['GET', 'POST'])
@@ -33,7 +37,7 @@ def uploaded_files():
 
     photo_url = str( "uploads/" + filename)
 
-    stmt = (insert(Photo).values(url=photo_url))
+    insert(Photo).values(url=photo_url)
     
 
 
