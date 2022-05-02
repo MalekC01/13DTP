@@ -1,16 +1,36 @@
 <!DOCTYPE html>
 <html>
 <body>
-<h2>File upload</h2>
+<h2>Add image to website</h2>
 <form method="POST" action="" enctype="multipart/form-data">
+
+  <label>Add File:</label>
   <p><input type="file" name="file" accept=".jpeg, .png"></p>
 
+  <label>Tags:</label><br>
 
-  <input type="checkbox" id="landscape" name="landscape" value="landscape">
+  <input type="checkbox" id="landscape" name="landscape">
   <label for="landscape">Landscape</label><br>
   <input type="checkbox" id="astro" name="astro" value="Astro">
   <label for="astro">Astro</label><br>
   
+  <br>
+  
+  <label>Location of image:</label>
+  <br>
+  <input type="text" id="location" name="location">
+
+  <br>
+  <br>
+  
+  <label for="ncea_level">Ncea level</label><br>
+
+  <label><input type="radio" name="ncea_level" id="ncea_level" value="2">Level 2</label>
+  <label>  <input type="radio" name="ncea_level" id="ncea_level" value="3">Level 3 </label>
+  <label>  <input type="radio" name="ncea_level" id="ncea_level" value="1">Not NCEA</label>
+
+  <br>
+  <br>
   <input type="submit" value="Submit">
 
 

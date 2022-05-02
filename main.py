@@ -35,14 +35,33 @@ def uploaded_files():
     print(filename)
     uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
 
+    location = request.form.get('location') 
     photo_url = str( "uploads/" + filename)
 
-    insert(Photo).values(url=photo_url)
+    ncea_level = 0
+
+    if request.form.get('ncea_level') == 2:
+        ncea_level = "2"
+    elif request.form.get('ncea_level') == 3:
+        ncea_level = "3"
+    else:
+        ncea_level = "Not NCEA"
+        
+        
+
+    add_photo_url = models.Photo(url=photo_url, location=location, ncea=ncea_level)
+    db.session.add(add_photo_url)
+    db.session.commit()
+
+    photo_id = models.Photo.query.filter_by(photo_url=photo_url).first() 
+
+    #session.query(User.name).filter(User.id == 1).first()
     
 
 
     if request.form.get('landscape'):
         # do query to add tag to photo id
+
         
         print(photo_url)
 
