@@ -33,31 +33,48 @@ def uploaded_files():
     uploaded_file = request.files['file']
     filename = uploaded_file.filename
     print(filename)
-    uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
-
-    location = request.form.get('location') 
     photo_url = str( "uploads/" + filename)
 
-    ncea_level = 0
+    check_duplicate = None
+    check_duplicate = models.Photo.query.filter_by(url=photo_url).first() 
 
-    if request.form.get('ncea_level') == 2:
-        ncea_level = "2"
-    elif request.form.get('ncea_level') == 3:
-        ncea_level = "3"
+    if check_duplicate == None:
+        uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
+        location = request.form.get('location') 
+    
+        ncea_level = 0
+
+        if request.form.get('ncea_level') == 2:
+            ncea_level = "2"
+        elif request.form.get('ncea_level') == 3:
+            ncea_level = "3"
+        else:
+            ncea_level = "Not NCEA"
+            
+            
+
+        add_photo_url = models.Photo(url=photo_url, location=location, ncea=ncea_level)
+        db.session.add(add_photo_url)
+        db.session.commit()
+
+        photo_id = models.Photo.query.filter_by(url=photo_url).first()
+
+        print(type(photo_id))
+
+        length = len(str(photo_id))
+        
+        found_id = str(photo_id)[7:length-1]
+        print(found_id)
+
     else:
-        ncea_level = "Not NCEA"
-        
-        
-
-    add_photo_url = models.Photo(url=photo_url, location=location, ncea=ncea_level)
-    db.session.add(add_photo_url)
-    db.session.commit()
-
-    photo_id = models.Photo.query.filter_by(photo_url=photo_url).first() 
-
-    #session.query(User.name).filter(User.id == 1).first()
+        print("Photo already in database try another one")
     
 
+    
+
+    
+
+    #session.query(User.name).filter(User.id == 1).first()
 
     if request.form.get('landscape'):
         # do query to add tag to photo id
