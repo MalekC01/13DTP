@@ -2,6 +2,30 @@
 <html>
 <body>
 <h2>Add image to website</h2>
+
+<!--All error messages from trying to add to database-->
+{% if error_found == True %}
+<h2>Error:</h2>
+<p>This photo has already been found inside the database try another image.</p>
+{%endif%}
+
+
+{% if error_duplicate == True %}
+<h2>Error:</h2>
+<p>This photo has already been found inside the database try another image.</p>
+{%endif%}
+
+{% if error_tag_not_added == True %}
+<h2>Error:</h2>
+<p>Tag was unable to be added to database try again.</p>
+{%endif%}
+
+{% if error_tag_found == True %}
+<h2>Error:</h2>
+<p>This tag has already been found in database, select tag from list instead</p>
+{%endif%}
+
+
 <form method="POST" action="" enctype="multipart/form-data">
 
   <label>Add File:</label>
@@ -13,6 +37,8 @@
   <label for="landscape">Landscape</label><br>
   <input type="checkbox" id="astro" name="astro" value="Astro">
   <label for="astro">Astro</label><br>
+  <label>New Tag:</label>
+  <input type="text" id="new_tag" name="new_tag">
   
   <br>
   

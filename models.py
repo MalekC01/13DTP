@@ -20,14 +20,13 @@ class Photo(db.Model):
 class Tags(db.Model):
   __tablename__ = "Tags"
   id = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
-  Location = db.Column(db.String())
-  Type = db.Column(db.String())
-  Ncea = db.Column(db.Integer())
+  tag_name = db.Column(db.String(), nullable=False)
 
    
 
-# class Photo_tag(db.Model):
-#    __tablename__ = "Photo_tag"
-#    pid = db.Column(db.Integer(), ForeignKey=True)
+class Photo_tag(db.Model):
+    __tablename__ = "Photo_tag"
+    pid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
+    tid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
 
 
