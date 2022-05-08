@@ -2,6 +2,14 @@ import os
 
 class Config(object):
     # Can (should?) use an environment variable to set this
+    UPLOAD_EXTENSIONS = ['.jpg', '.png', '.gif']
+    UPLOAD_PATH = 'uploads'
+
+    error_duplicate = False
+    error_tag_not_added = False
+    error_tag_found = False
+    form_error = False
+
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'correcthorsebatterystaple'  # https://xkcd.com/936/
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \

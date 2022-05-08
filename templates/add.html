@@ -4,31 +4,9 @@
 <h2>Add image to website</h2>
 
 <!--All error messages from trying to add to database-->
-{% if error_found == True %}
-<h2>Error:</h2>
-<p>This photo has already been found inside the database try another image.</p>
-{%endif%}
 
 
-{% if error_duplicate == True %}
-<h2>Error:</h2>
-<p>This photo has already been found inside the database try another image.</p>
-{%endif%}
-
-{% if error_tag_not_added == True %}
-<h2>Error:</h2>
-<p>Tag was unable to be added to database try again.</p>
-{%endif%}
-
-{% if error_tag_found == True %}
-<h2>Error:</h2>
-<p>This tag has already been found in database, select tag from list instead</p>
-{%endif%}
-
-
-<form method="POST" action="" enctype="multipart/form-data">
-
-  <label>Add File:</label>
+  <!-- <label>Add File:</label>
   <p><input type="file" name="file" accept=".jpeg, .png"></p>
 
   <label>Tags:</label><br>
@@ -57,9 +35,15 @@
 
   <br>
   <br>
+  <input type="submit" value="Submit"> -->
+
+  <form method="POST" action="" enctype="multipart/form-data">
+  {{ form.csrf_token }}
+  <p>Ncea Level: {{ form.ncea }} </p>
+
+  <input type="file" name="file" accept=".jpeg, .png">
+
   <input type="submit" value="Submit">
-
-
 
 </form>
 
