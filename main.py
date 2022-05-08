@@ -28,9 +28,11 @@ def home():
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_photo():
-    form = Add_Photo()
+    form = forms.Add_Photo()
     if request.method=='GET':  # did the browser ask to see the page
-        return render_template('add.html', form=form)
+        all_tags = models.Tags.query.filter_by(tag_names=tag_names).all()
+        print(all_tags)
+        return render_template('add.html', form=form, all_tags=all_tags)
     else:  # its a POST, ie: the user clicked SUBMIT
         if form.validate_on_submit():
 
@@ -42,6 +44,9 @@ def add_photo():
                 ncea_level = "2"
             else:
                 ncea_level = "Not NCEA"
+
+
+            
 
             uploaded_file = request.files['file']
             filename = uploaded_file.filename
