@@ -6,6 +6,9 @@ PhotoTags = db.Table('PhotoTags',
     db.Column('tid', db.Integer, db.ForeignKey('Tags.id'))
 )
 
+
+
+
 class Photo(db.Model):
   __tablename__ = "Photo"
   id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
@@ -25,8 +28,12 @@ class Tags(db.Model):
    
 
 class Photo_tag(db.Model):
-    __tablename__ = "Photo_tag"
-    pid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
-    tid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
+  __tablename__ = "Photo_tag"
+  pid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
+  tid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
 
 
+class Locations(db.Model):
+  __tablename__ = "Locations"
+  id = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
+  location_name = db.Column(db.String(), nullable=False)

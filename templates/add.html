@@ -1,56 +1,55 @@
-<!DOCTYPE html>
+{%extends 'layout.html' %}
+{%block content%}
 <html>
 <body>
-<h2>Add image to website</h2>
+<div class="add_form">
+  <h2>Add image to website</h2>
 
-<!--All error messages from trying to add to database-->
+    <form method="POST" action="" enctype="multipart/form-data">
+    {{ form.csrf_token }}
 
-
-  <!-- <label>Add File:</label>
-  <p><input type="file" name="file" accept=".jpeg, .png"></p>
-
-  <label>Tags:</label><br>
-
-  <input type="checkbox" id="landscape" name="landscape">
-  <label for="landscape">Landscape</label><br>
-  <input type="checkbox" id="astro" name="astro" value="Astro">
-  <label for="astro">Astro</label><br>
-  <label>New Tag:</label>
-  <input type="text" id="new_tag" name="new_tag">
-  
-  <br>
-  
-  <label>Location of image:</label>
-  <br>
-  <input type="text" id="location" name="location">
-
-  <br>
-  <br>
-  
-  <label for="ncea_level">Ncea level</label><br>
-
-  <label><input type="radio" name="ncea_level" id="ncea_level" value="2">Level 2</label>
-  <label>  <input type="radio" name="ncea_level" id="ncea_level" value="3">Level 3 </label>
-  <label>  <input type="radio" name="ncea_level" id="ncea_level" value="1">Not NCEA</label>
-
-  <br>
-  <br>
-  <input type="submit" value="Submit"> -->
-
-  <form method="POST" action="" enctype="multipart/form-data">
-  {{ form.csrf_token }}
-  <p>Ncea Level: {{ form.ncea }} </p>
-
-  <input type="file" name="file" accept=".jpeg, .png">
-
-  <input type="submit" value="Submit">
-
-</form>
+    <input type="file" name="display-image" id="display-image" accept=".jpeg, .png", onchange="showPreview(event);">
+    <br>
+    <div class="preview">
+      
+      <img id="display-image-preview">
+    </div>
 
 
 
+
+    <p>Ncea Level: {{ form.ncea }} </p>
+
+    <p>Tags: <br> {{ form.tags }} </p>
+    <p>New tag: <br> {{ form.new_tag }} </p>
+
+    <p>Locations: <br> {{ form.locations }} </p>
+    <p>New location: <br> {{ form.new_location }} </p>
+
+
+    <input type="submit" value="Submit">
+
+  </form>
+
+
+</div>
 
 
 
 </body>
+
+
+<script>
+function showPreview(event){
+  if(event.target.files.length > 0){
+    var src = URL.createObjectURL(event.target.files[0]);
+    var preview = document.getElementById("display-image-preview");
+    preview.src = src;
+    preview.style.display = "block";
+  }
+}
+
+</script> 
+
 </html>
+{% endblock %}

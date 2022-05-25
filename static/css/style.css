@@ -1,0 +1,51 @@
+body {
+  font-family: "Helvetica";
+  margin: 0px;
+}
+
+main{
+  padding: 3%;
+  margin: auto;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+
+.header{
+  margin-left: 1%;
+}
+
+.nav a {
+  float: left;
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  background-color: black;
+}
+    
+.nav a:hover {
+  background-color: rgb(214, 214, 214);
+  color: black;
+}
+
+.nav {
+  width: 100%;
+  position: relative;
+  border: lightgray 1px solid;
+}
+
+.add_form{
+  list-style: none;
+  margin: auto;
+  width: 40%;
+  border: 5px solid black;
+  padding: 10px;
+  list-style: none;
+}
+
+.preview img{
+  width: 10%;
+  height: auto;
+  border: 2px solid black;
+
+}
