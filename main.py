@@ -1,8 +1,14 @@
-from flask import Flask, render_template, request, redirect, abort
+
+from flask import Flask, render_template, request, redirect, url_for, abort, \
+    send_from_directory
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert
 from config import Config
+
+
+
+
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -16,7 +22,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 WTF_CSRF_ENABLED = True
 WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
-app.config['UPLOAD_PATH'] = 'uploads'
+app.config['UPLOAD_PATH'] = 'static/images/uploads'
 
 #home page route
 @app.route('/', methods=['GET', 'POST'])
@@ -26,7 +32,8 @@ def home():
 @app.route('/gallery', methods=['GET', 'POST'])
 def gallery():
     #all_photos = models.Photo.query.filter_by(url=url).all()
-    return render_template('gallery.html', title="Home")
+    files = os.listdir(app.config['UPLOAD_PATH'])
+    return render_template('gallery.html', files=files)
 
 #returns on all pages
 # @app.contect_processor()
@@ -54,8 +61,10 @@ def add_photo():
     else:  # its a POST, ie: the user clicked SUBMIT
         print(form.tags.data)
         if form.validate_on_submit():
-            uploaded_file = request.files['file']
+            uploaded_file = request.files['display-image']
             filename = uploaded_file.filename
+            print(filename)
+            uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
             photo_url = str( "uploads/" + filename)
 
 
@@ -131,7 +140,7 @@ def add_photo():
                 print("Photo already in database.")
 
 
-            return render_template('add.html', form=form, title="Add")
+            return render_template('add.html', form=form, filename=filename, title="Add")
 
         return render_template('add.html', form=form, title="Add")
 

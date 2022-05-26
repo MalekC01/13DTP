@@ -1,4 +1,10 @@
 {%extends 'layout.html' %}
 {%block content%}
-<img src="uploads/_MG_3646 2.JPG" alt="Italian Trulli">
+
+
+<img src="/static/images/uploads/photo.JPG">
+
+{% for file in files %}
+    <img src="{{ url_for('/static/images/uploads/', filename=file) }}" style="width: 64px">
+{% endfor %} -->
 {% endblock %}

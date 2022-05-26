@@ -44,8 +44,9 @@ main{
 }
 
 .preview img{
-  width: 10%;
+  width: 20%;
   height: auto;
   border: 2px solid black;
+  margin-top: 2%;
 
 }
