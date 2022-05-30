@@ -2,9 +2,14 @@
 {%block content%}
 
 
-<img src="/static/images/uploads/photo.JPG">
 
-{% for file in files %}
-    <img src="{{ url_for('/static/images/uploads/', filename=file) }}" style="width: 64px">
-{% endfor %} -->
+
+<div class="gallery_images">
+<img src="static/images/uploads/_MG_3656.JPG">
+{% for picture in files %}
+    <img src="{{ url_for(path, filename=picture) }}">
+{% endfor %} 
+</div>
+
+
 {% endblock %}

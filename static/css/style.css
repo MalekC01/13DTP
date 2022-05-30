@@ -50,3 +50,10 @@ main{
   margin-top: 2%;
 
 }
+
+
+.gallery_images img{
+  width: 5%;
+  height: auto;
+
+}

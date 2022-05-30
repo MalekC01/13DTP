@@ -1,14 +1,10 @@
 
-from flask import Flask, render_template, request, redirect, url_for, abort, \
+from flask import Flask, render_template, request, redirect, abort, \
     send_from_directory
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert
 from config import Config
-
-
-
-
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -17,12 +13,17 @@ app.config.from_object(Config)
 import models
 import forms
 
+
+
 #error messages
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 WTF_CSRF_ENABLED = True
 WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
+app.config['PATH'] = 'static/images/uploads/'
+
+
 
 #home page route
 @app.route('/', methods=['GET', 'POST'])
@@ -33,7 +34,13 @@ def home():
 def gallery():
     #all_photos = models.Photo.query.filter_by(url=url).all()
     files = os.listdir(app.config['UPLOAD_PATH'])
-    return render_template('gallery.html', files=files)
+    print("files: " + str(files))
+    path = app.config['PATH']
+    for pictures in files:
+        print("pictures: " + str(pictures))
+        print(path + pictures)
+
+    return render_template('gallery.html', files=files, path=path)
 
 #returns on all pages
 # @app.contect_processor()
