@@ -2,13 +2,16 @@
 {%block content%}
 
 
-
+<h1>Gallery</h1>
 
 <div class="gallery_images">
-<img src="static/images/uploads/_MG_3656.JPG">
+
 {% for picture in files %}
-    <img src="{{ url_for(path, filename=picture) }}">
+    <div class="gird_image">
+        <img src="/static/images/uploads/{{picture}}">
+    </div>
 {% endfor %} 
+
 </div>
 
 

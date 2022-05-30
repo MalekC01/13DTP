@@ -23,6 +23,10 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
 app.config['PATH'] = 'static/images/uploads/'
 
+# {% for picture in files %}
+#     <img src="{{ url_for(path, filename=picture) }}">
+# {% endfor %} 
+
 
 
 #home page route
@@ -33,7 +37,9 @@ def home():
 @app.route('/gallery', methods=['GET', 'POST'])
 def gallery():
     #all_photos = models.Photo.query.filter_by(url=url).all()
-    files = os.listdir(app.config['UPLOAD_PATH'])
+    list_of_files = os.listdir(app.config['UPLOAD_PATH'])
+ 
+    files = list_of_files[1:]
     print("files: " + str(files))
     path = app.config['PATH']
     for pictures in files:
