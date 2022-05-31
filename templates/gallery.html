@@ -6,11 +6,15 @@
 
 <div class="gallery_images">
 
-{% for picture in files %}
-    <div class="gird_image">
-        <a class="link_info" href="/info"><img src="/static/images/uploads/{{picture}}"></a>
-    </div>
-{% endfor %} 
+
+    {% for picture in files %}
+        <div class="grid_image">
+            <a class="link_info" href="/info/{{picture.id}}"><img src="/static/images/uploads/{{picture}}"></a>
+        </div>
+    {% endfor %} 
+
+
+
 
 </div>
 

@@ -1,6 +1,5 @@
 
-from flask import Flask, render_template, request, redirect, abort, \
-    send_from_directory
+from flask import Flask, render_template, request
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert
@@ -33,17 +32,29 @@ app.config['UPLOAD_PATH'] = 'static/images/uploads'
 def home():
     return render_template('home.html', title="Home")
 
+
+
 @app.route('/gallery', methods=['GET', 'POST'])
 def gallery():
     #all_photos = models.Photo.query.filter_by(url=url).all()
     list_of_files = os.listdir(app.config['UPLOAD_PATH'])
+
     files = list_of_files[1:]
     print("all images: " + str(files))
+    for picture in files:
+        print("Picture: " + str(picture))
+
+    # info_of_image = models.Photo.query.filter_by(url=picture).all()
+    
+    # for info in info_of_image:
+    #     print("Info about image: " + str(info))
 
     return render_template('gallery.html', files=files)
 
-@app.route('/info', methods=['GET', 'POST'])
+
+@app.route('/info/<string:id>', methods=['GET', 'POST'])
 def info():
+    
     return render_template('info.html', title="Info")
 
 #returns on all pages

@@ -7,8 +7,6 @@ PhotoTags = db.Table('PhotoTags',
 )
 
 
-
-
 class Photo(db.Model):
   __tablename__ = "Photo"
   id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)

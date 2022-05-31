@@ -1,6 +1,15 @@
 body {
   font-family: "Helvetica";
   margin: 0px;
+  background-color: #111211;
+  color: white;
+  text-decoration: none;
+
+}
+
+a {
+  text-decoration: none;
+  color: white;
 }
 
 main{
@@ -41,6 +50,9 @@ main{
   border: 5px solid black;
   padding: 10px;
   list-style: none;
+  background-color: white;
+  color: black;
+  margin-top: 5%;
 }
 
 .preview img{
@@ -68,4 +80,29 @@ main{
 .grid_image {
   display: inline-grid;
 
+
+}
+
+.grid_image img{
+  border: 2px solid white;
+}
+
+
+input[type=text] {
+  border: none;
+  border: 2px solid #1D1E2C;
+  padding: 12px 20px;
+  margin: 8px 0;
+  width:20%;
+}
+
+
+input[type=button], input[type=submit], input[type=reset] {
+  background-color: #1D1E2C;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
 }
