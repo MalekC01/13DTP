@@ -21,14 +21,13 @@ WTF_CSRF_ENABLED = True
 WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
-app.config['PATH'] = 'static/images/uploads/'
 
 # {% for picture in files %}
 #     <img src="{{ url_for(path, filename=picture) }}">
 # {% endfor %} 
 
 
-
+#https://www.freecodecamp.org/news/how-to-create-an-image-gallery-with-css-grid-e0f0fd666a5c/
 #home page route
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -38,15 +37,14 @@ def home():
 def gallery():
     #all_photos = models.Photo.query.filter_by(url=url).all()
     list_of_files = os.listdir(app.config['UPLOAD_PATH'])
- 
     files = list_of_files[1:]
-    print("files: " + str(files))
-    path = app.config['PATH']
-    for pictures in files:
-        print("pictures: " + str(pictures))
-        print(path + pictures)
+    print("all images: " + str(files))
 
-    return render_template('gallery.html', files=files, path=path)
+    return render_template('gallery.html', files=files)
+
+@app.route('/info', methods=['GET', 'POST'])
+def info():
+    return render_template('info.html', title="Info")
 
 #returns on all pages
 # @app.contect_processor()
