@@ -1,15 +1,15 @@
 {%extends 'layout.html' %}
 {%block content%}
 
-
+<div class="gallery">
 <h1>Gallery</h1>
 
 <div class="gallery_images">
 
 
-    {% for picture in files %}
+    {% for picture in id_url %}
         <div class="grid_image">
-            <a class="link_info" href="/info/{{picture.id}}"><img src="/static/images/uploads/{{picture}}"></a>
+            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
         </div>
     {% endfor %} 
 
@@ -18,5 +18,5 @@
 
 </div>
 
-
+</div>
 {% endblock %}

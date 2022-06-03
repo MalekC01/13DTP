@@ -1,9 +1,9 @@
-
 from flask import Flask, render_template, request
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert
 from config import Config
+import random
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -11,7 +11,7 @@ app.config.from_object(Config)
 
 import models
 import forms
-
+from image_exif import exif_for_image
 
 
 #error messages
@@ -36,26 +36,25 @@ def home():
 
 @app.route('/gallery', methods=['GET', 'POST'])
 def gallery():
-    #all_photos = models.Photo.query.filter_by(url=url).all()
-    list_of_files = os.listdir(app.config['UPLOAD_PATH'])
+    url_of_all_images = models.Photo.query.all()
+    id_url = [(str(url.id), url.url) for url in url_of_all_images]
+    print(id_url[1])
 
-    files = list_of_files[1:]
-    print("all images: " + str(files))
-    for picture in files:
-        print("Picture: " + str(picture))
-
-    # info_of_image = models.Photo.query.filter_by(url=picture).all()
-    
-    # for info in info_of_image:
-    #     print("Info about image: " + str(info))
-
-    return render_template('gallery.html', files=files)
+    random.shuffle(id_url)
 
 
-@app.route('/info/<string:id>', methods=['GET', 'POST'])
-def info():
-    
-    return render_template('info.html', title="Info")
+    return render_template('gallery.html', id_url=id_url)
+
+
+@app.route('/photo/<int:id>', methods=['GET', 'POST'])
+def photo(id):
+    image_data = models.Photo.query.filter_by(id=id).all()
+    info_of_image = [(str(info.id), info.url) for info in image_data]
+    print(info_of_image[0])
+
+    data_for_image = exif_for_image(info_of_image)
+
+    return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image)
 
 #returns on all pages
 # @app.contect_processor()

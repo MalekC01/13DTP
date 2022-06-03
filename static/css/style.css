@@ -69,7 +69,7 @@ main{
   height: auto;
 }
 
-.gallery_images {
+.gallery_images{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   column-gap: 1%;
@@ -105,4 +105,12 @@ input[type=button], input[type=submit], input[type=reset] {
   text-decoration: none;
   margin: 4px 2px;
   cursor: pointer;
+}
+
+.gallery {
+  margin: 20px;
+}
+
+.info_image img {
+  width: 10%;
 }
