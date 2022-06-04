@@ -8,6 +8,10 @@
     <form method="POST" action="" enctype="multipart/form-data">
     {{ form.csrf_token }}
 
+    {%if duplicate_found == True%}
+    <p>This image has already been added to the database!</p>
+    {% endif %}
+
     <input type="file" name="display-image" id="display-image" accept=".jpeg, .png", onchange="showPreview(event);">
     <br>
     <div class="preview">
@@ -17,8 +21,10 @@
 
 
 
-
+    <p>Image orientation: {{form.orientation}}</p>
     <p>Ncea Level: {{ form.ncea }} </p>
+
+    
 
     <p>Tags: <br> {{ form.tags }} </p>
     <p>New tag: <br> {{ form.new_tag }} </p>

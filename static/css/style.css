@@ -43,6 +43,60 @@ main{
 }
 
 
+.mySlides.fade img{
+  width: 80%;
+}
+
+
+.slideshow-container {
+  max-width: 60%;
+  position: relative;
+  margin: auto;
+}
+
+.mySlides {
+  display: none;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: black;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
 .add_form{
   list-style: none;
   margin: auto;
@@ -79,8 +133,6 @@ main{
 
 .grid_image {
   display: inline-grid;
-
-
 }
 
 .grid_image img{
@@ -111,6 +163,41 @@ input[type=button], input[type=submit], input[type=reset] {
   margin: 20px;
 }
 
+.info_grid{
+  display: grid;
+  height: auto;
+  grid-gap: 25px;
+  padding: 50px;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  margin-top: 5%;
+}
+
+
 .info_image img {
-  width: 10%;
+  width: 100%;
+  height: auto;
+  border: 2px solid white;
+}
+
+
+.info_image{
+  display: inline-grid;
+}
+
+.information_of_image{
+  display: inline-grid;
+  border: 2px solid white;
+  border-radius: 2%;
+  padding-left: 5%;
+  
+}
+
+.setting_grid{
+  display: grid;
+  height: auto;
+  grid-gap: 2%;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  margin-top: 1%;
 }

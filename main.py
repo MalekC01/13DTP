@@ -30,7 +30,15 @@ app.config['UPLOAD_PATH'] = 'static/images/uploads'
 #home page route
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('home.html', title="Home")
+    pictures_for_slideshow = models.Photo.query.filter_by(orientation="Landscape").all()
+    print("slideshow: " + str(pictures_for_slideshow))
+    images_id_slides = [(str(id.id), id.url) for id in pictures_for_slideshow]
+    print(images_id_slides)
+
+    random_index = random.sample(images_id_slides, 3)
+    print(random_index)
+
+    return render_template('home.html', title="Home", random_index=random_index)
 
 
 
@@ -38,8 +46,8 @@ def home():
 def gallery():
     url_of_all_images = models.Photo.query.all()
     id_url = [(str(url.id), url.url) for url in url_of_all_images]
-    print(id_url[1])
 
+    
     random.shuffle(id_url)
 
 
@@ -54,7 +62,22 @@ def photo(id):
 
     data_for_image = exif_for_image(info_of_image)
 
-    return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image)
+    
+
+    tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
+    print("tags: " + str(tags_for_image))
+    tags_of_image = [(tags.tid) for tags in tags_for_image]
+    print("All ids: " + str(tags_of_image))
+
+    list_of_tags = []
+    for all_tags in tags_of_image:
+        tags_id_image = models.Tags.query.filter_by(id=all_tags).all()
+        tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
+        list_of_tags.append(tags_name)
+        print("All tags: " + str(tags_name))
+    print(list_of_tags)
+
+    return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags)
 
 #returns on all pages
 # @app.contect_processor()
@@ -80,20 +103,29 @@ def add_photo():
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('add.html', form=form)
     else:  # its a POST, ie: the user clicked SUBMIT
+        print("submission")
         print(form.tags.data)
         if form.validate_on_submit():
+
+            print("Form Submitted")
+
             uploaded_file = request.files['display-image']
             filename = uploaded_file.filename
-            print(filename)
+            print("filename: " + str(filename))
             uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
             photo_url = str( "uploads/" + filename)
 
 
 
             check_duplicate_photo = models.Photo.query.filter_by(url=photo_url).all()
-            print(check_duplicate_photo)
+            print("checkduplicate: " + str(check_duplicate_photo))
+            duplicate_found = False
+
             if check_duplicate_photo == []:
                 #Take ncea input from form and get ready to be inputted into database
+                orientation = form.orientation.data
+                print("orientation: " + str(orientation))
+
                 ncea_level = form.ncea.data
                 if ncea_level == "Level 1":
                     ncea_level = "1"
@@ -101,14 +133,14 @@ def add_photo():
                     ncea_level = "2"
                 else:
                     ncea_level = "Not NCEA"
-                print(ncea_level)
+                print("NCEA LEVEL: " + str(ncea_level))
 
                 locations_chosen = form.locations.data
                 print("locations chosen: " + str(locations_chosen))
 
             
                 new_location = form.new_location.data
-                print(new_location)
+                print("New location: " + str(new_location))
                 if new_location != '':
                     #change to if any instead of querying all
                     check_location_duplicate = models.Locations.query.filter_by(location_name=new_location).all()
@@ -135,7 +167,7 @@ def add_photo():
                         db.session.commit()
 
 
-                add_photo_url = models.Photo(url=photo_url, location=location_id, ncea=ncea_level)
+                add_photo_url = models.Photo(url=photo_url, location=location_id, ncea=ncea_level, orientation=orientation)
                 db.session.add(add_photo_url)
                 db.session.commit()
 
@@ -154,14 +186,15 @@ def add_photo():
                 for tag in tag_id_list:
                     add_tag_and_photo = models.Photo_tag(pid=photo_id, tid=tag)
                     db.session.add(add_tag_and_photo)
-
+        
                 
                 db.session.commit()
             else:
                 print("Photo already in database.")
+                duplicate_found = True
 
 
-            return render_template('add.html', form=form, filename=filename, title="Add")
+            return render_template('add.html', form=form, filename=filename, title="Add", duplicate_found=duplicate_found)
 
         return render_template('add.html', form=form, title="Add")
 

@@ -1,17 +1,33 @@
 {%extends 'layout.html' %}
 {%block content%}
-<div class="info">
+<div class="info_grid">
 
 
-<div class="info_image">
-    <img src="/static/images/{{info_of_image[0][1]}}">
-</div>
+    <div class="info_image">
+        <img src="/static/images/{{info_of_image[0][1]}}">
+    </div>
 
-<p>{{data_for_image[0]}}</p>
-<p>{{data_for_image[1]}}</p>
-<p>{{data_for_image[2]}}</p>
-<p>{{data_for_image[3]}}</p>
 
+    <div class="information_of_image">
+        
+        
+        <h1>Info</h1>
+        <div class="setting_grid">
+            <p><b>Focal Length:</b> {{data_for_image[0]}}</p>
+
+            <p><b>Date:</b> {{data_for_image[1]}}</p>
+
+            <p><b>Exposure Length:</b> {{data_for_image[2]}}</p>
+
+            <p><b>Apperture:</b> {{data_for_image[3]}}</p>
+
+        </div>
+
+        <h3>Tags:</h3>
+        {% for tag_name in list_of_tags%}
+            <li>{{tag_name[0]}}</li>
+        {% endfor %}
+    </div>
 
 
 

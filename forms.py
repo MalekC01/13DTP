@@ -13,3 +13,4 @@ class Add_Photo(FlaskForm):
     new_tag = TextField('new_tag')
     locations = RadioField('locations', validators=[DataRequired()])
     new_location = TextField('new_location')
+    orientation = RadioField('ncea', choices=[('Portrait','Portrait'), ('Landscape','Landscape') ], validators=[DataRequired()])
