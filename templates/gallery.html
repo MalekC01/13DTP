@@ -8,10 +8,28 @@
 
 
     {% for picture in id_url %}
+
+    {% if picture[2] == "Portrait" %}
         <div class="grid_image">
-            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
+            <div class="portrait_photo{{picture[0]}}">
+                <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
+            </div>
         </div>
-    {% endfor %} 
+
+        <style>
+
+        .portrait_photo{picture[0]} {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        </style>
+
+
+    {% endfor %}
+
+
+  
 
 
 

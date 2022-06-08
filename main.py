@@ -44,11 +44,12 @@ def home():
 
 @app.route('/gallery', methods=['GET', 'POST'])
 def gallery():
-    url_of_all_images = models.Photo.query.all()
-    id_url = [(str(url.id), url.url) for url in url_of_all_images]
 
-    
+    url_of_all_images = models.Photo.query.all()
+    print("raw: " + str(url_of_all_images))
+    id_url = [(str(url.id), url.url, url.orientation) for url in url_of_all_images]
     random.shuffle(id_url)
+    print(id_url)
 
 
     return render_template('gallery.html', id_url=id_url)
