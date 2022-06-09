@@ -49,21 +49,29 @@ def gallery():
     print("raw: " + str(url_of_all_images))
     id_url = [(str(url.id), url.url, url.orientation) for url in url_of_all_images]
     random.shuffle(id_url)
-    print(id_url)
+    print("before: " + str(id_url))
+
+    picture_format_options = ["grid-item--width2", "grid-item--width3"]
+
+    with_format = [width_type + (random.choice(picture_format_options),) for width_type in id_url]
+    print("with format: " + str(with_format))
 
 
-    return render_template('gallery.html', id_url=id_url)
+    return render_template('gallery.html', id_url=with_format)
 
 
 @app.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
     image_data = models.Photo.query.filter_by(id=id).all()
-    info_of_image = [(str(info.id), info.url) for info in image_data]
-    print(info_of_image[0])
+    info_of_image = [(str(info.id), info.url, info.orientation) for info in image_data]
+    print(info_of_image)
 
     data_for_image = exif_for_image(info_of_image)
 
-    
+    if info_of_image[0][2] == "Portrait":
+        format_of_image = "Portrait"
+    else:
+        format_of_image = "Landscape"
 
     tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
     print("tags: " + str(tags_for_image))
@@ -78,7 +86,7 @@ def photo(id):
         print("All tags: " + str(tags_name))
     print(list_of_tags)
 
-    return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags)
+    return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image)
 
 #returns on all pages
 # @app.contect_processor()

@@ -1,12 +1,27 @@
 {%extends 'layout.html' %}
 {%block content%}
+
+<div class="back_button">
+<a href="/gallery"><img src="/static/images/Icons/arrow_back_FILL0_wght700_GRAD200_opsz20.png"><b>Back To Gallery</b></a>
+</div>
+
 <div class="info_grid">
 
 
-    <div class="info_image">
+    
+
+    {% if format_of_image == "Portrait"%}
+    <div class="info_image_portrait">
         <img src="/static/images/{{info_of_image[0][1]}}">
     </div>
 
+    {% elif format_of_image == "Landscape" %}
+
+    <div class="info_image_landscape">
+        <img src="/static/images/{{info_of_image[0][1]}}">
+    </div>
+
+    {% endif %}
 
     <div class="information_of_image">
         
