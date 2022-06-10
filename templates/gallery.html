@@ -4,27 +4,36 @@
 <div class="gallery">
 <h1>Gallery</h1>
 
-<div class="grid">
+<form method="POST" action="" enctype="multipart/form-data">
+<p>Filter images: {{ form.options }}</p>
+<input type="submit" value="Submit">
 
-    <div class="grid-sizer"></div>
-    {% for picture in id_url %}
+{% if display_all == True%}
+    <div class="grid">
 
-        <div class="grid-item {{picture[3]}}">
-            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
-        </div>
+        {% for picture in id_url %}
 
-    {% endfor %}
+                <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
 
+        {% endfor %}
+
+
+    </div>
+{% endif %}
+
+{% if display_all == False%}
+    <div class="grid">
+
+        {% for picture in image_url %}
+
+            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[0][1]}}"></a>
+
+        {% endfor %}
+
+
+    </div>
+{% endif %}
 
 </div>
 
-</div>
-
-<script>
-$('.grid').masonry({
-  itemSelector: '.grid-item',
-  columnWidth: '.grid-sizer',
-  percentPosition: true
-});
-</script>
 {% endblock %}

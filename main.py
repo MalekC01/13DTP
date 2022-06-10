@@ -21,50 +21,109 @@ WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
 
-# {% for picture in files %}
-#     <img src="{{ url_for(path, filename=picture) }}">
-# {% endfor %} 
 
-
-#https://www.freecodecamp.org/news/how-to-create-an-image-gallery-with-css-grid-e0f0fd666a5c/
 #home page route
 @app.route('/', methods=['GET', 'POST'])
 def home():
     pictures_for_slideshow = models.Photo.query.filter_by(orientation="Landscape").all()
-    print("slideshow: " + str(pictures_for_slideshow))
+    
     images_id_slides = [(str(id.id), id.url) for id in pictures_for_slideshow]
-    print(images_id_slides)
+
 
     random_index = random.sample(images_id_slides, 3)
-    print(random_index)
+
 
     return render_template('home.html', title="Home", random_index=random_index)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html'), 404
+
+
+
+
+@app.route('/ncea', methods=['GET', 'POST'])
+def ncea():
+    return render_template('ncea.html')
+
+
+@app.route('/level_2', methods=['GET', 'POST'])
+def level_2():
+    all_level_2_images = models.Photo.query.filter_by(ncea=2).all()
+    level_2 = [(str(images.id), images.url) for images in all_level_2_images]
+    return render_template('level_2.html', level_2=level_2)
+
+
+@app.route('/level_3', methods=['GET', 'POST'])
+def level_3():
+    all_level_3_images = models.Photo.query.filter_by(ncea=3).all()
+    level_3 = [(str(images.id), images.url) for images in all_level_3_images]
+    
+    return render_template('level_3.html', level_3=level_3)
 
 
 
 @app.route('/gallery', methods=['GET', 'POST'])
 def gallery():
 
+    display_all = True
+
+    form = forms.Filter_images()
+
+    all_tags = models.Tags.query.all()
+    tags_for_filter = [(str(tag.id), tag.tag_name) for tag in all_tags]
+    
+    print("All tags: " + str(tags_for_filter))
+    form.options.choices = tags_for_filter
+
     url_of_all_images = models.Photo.query.all()
-    print("raw: " + str(url_of_all_images))
     id_url = [(str(url.id), url.url, url.orientation) for url in url_of_all_images]
     random.shuffle(id_url)
-    print("before: " + str(id_url))
+    
+    if request.method=='GET':  # did the browser ask to see the page
+        return render_template('gallery.html', id_url=id_url, form=form, display_all=display_all)
+    else:  # its a POST, ie: the user clicked SUBMIT
+        if form.options.data == None:
+            return render_template('gallery.html')
+        else:
+            image_url = None
+            display_all = False
+            print("form submitted")
+            #if form.validate_on_submit():
+            tags_to_search = []
+            for tag_ids in form.options.data:
+                chosen_tags = models.Tags.query.filter_by(id=tag_ids).all()
+                filtered_images = [(str(tag.id)) for tag in chosen_tags]
+                tags_to_search.append(filtered_images)
+            print("List of tag ids: " + str(tags_to_search))
 
-    picture_format_options = ["grid-item--width2", "grid-item--width3"]
+            photo_ids = []
+            for tag_id in tags_to_search[:len(tags_to_search)][0]:
+                search_for_photo_id = models.Photo_tag.query.filter_by(tid=tag_id).all()
+                image_id = [(str(image_id.pid)) for image_id in search_for_photo_id]
+                photo_ids.append(image_id)
+            
 
-    with_format = [width_type + (random.choice(picture_format_options),) for width_type in id_url]
-    print("with format: " + str(with_format))
+            photo_ids = photo_ids[0]
+            print("List of tag ids: " + str(photo_ids))
 
+            urls = []
+            for data in photo_ids:
+                search_for_photo_url = models.Photo.query.filter_by(id=data).all()
+                image_url = [(str(url_and_id.id),url_and_id.url) for url_and_id in search_for_photo_url]
+                urls.append(image_url)
+            random.shuffle(urls)
+            print("Photo ids: " + str(urls))
 
-    return render_template('gallery.html', id_url=with_format)
+            return render_template('gallery.html', form=form, image_url=urls, display_all=display_all)
+
 
 
 @app.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
     image_data = models.Photo.query.filter_by(id=id).all()
     info_of_image = [(str(info.id), info.url, info.orientation) for info in image_data]
-    print(info_of_image)
 
     data_for_image = exif_for_image(info_of_image)
 
@@ -74,17 +133,16 @@ def photo(id):
         format_of_image = "Landscape"
 
     tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
-    print("tags: " + str(tags_for_image))
+
     tags_of_image = [(tags.tid) for tags in tags_for_image]
-    print("All ids: " + str(tags_of_image))
+
 
     list_of_tags = []
     for all_tags in tags_of_image:
         tags_id_image = models.Tags.query.filter_by(id=all_tags).all()
         tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
         list_of_tags.append(tags_name)
-        print("All tags: " + str(tags_name))
-    print(list_of_tags)
+
 
     return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image)
 
@@ -100,56 +158,49 @@ def add_photo():
     all_tags = models.Tags.query.all()
     tags_for_form = [(str(tag.id), tag.tag_name) for tag in all_tags]
     form.tags.choices = tags_for_form
-    print(form.tags.choices)
+
 
     #query database for all previous locations
     all_locations = models.Locations.query.all()
     locations_for_form = [(str(location.id), location.location_name) for location in all_locations]
     form.locations.choices = locations_for_form
-    print(form.locations.choices)
+
 
 
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('add.html', form=form)
     else:  # its a POST, ie: the user clicked SUBMIT
-        print("submission")
-        print(form.tags.data)
+
         if form.validate_on_submit():
 
-            print("Form Submitted")
+ 
 
             uploaded_file = request.files['display-image']
             filename = uploaded_file.filename
-            print("filename: " + str(filename))
             uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
             photo_url = str( "uploads/" + filename)
 
 
 
             check_duplicate_photo = models.Photo.query.filter_by(url=photo_url).all()
-            print("checkduplicate: " + str(check_duplicate_photo))
             duplicate_found = False
 
             if check_duplicate_photo == []:
                 #Take ncea input from form and get ready to be inputted into database
                 orientation = form.orientation.data
-                print("orientation: " + str(orientation))
 
                 ncea_level = form.ncea.data
-                if ncea_level == "Level 1":
-                    ncea_level = "1"
-                elif ncea_level == "Level 2":
+                if ncea_level == "Level 2":
                     ncea_level = "2"
+                elif ncea_level == "Level 3":
+                    ncea_level = "3"
                 else:
                     ncea_level = "Not NCEA"
-                print("NCEA LEVEL: " + str(ncea_level))
 
                 locations_chosen = form.locations.data
-                print("locations chosen: " + str(locations_chosen))
 
             
                 new_location = form.new_location.data
-                print("New location: " + str(new_location))
                 if new_location != '':
                     #change to if any instead of querying all
                     check_location_duplicate = models.Locations.query.filter_by(location_name=new_location).all()
@@ -160,16 +211,13 @@ def add_photo():
                     find_location_id = models.Locations.query.filter_by(location_name=new_location).all()
                     location_id_list = [(str(location.id)) for location in find_location_id]
                     location_id = location_id_list[0]
-                    print(location_id)
                 else:
                     location_id = form.locations.data
 
 
                 new_tag = form.new_tag.data
                 if new_tag != '':
-                    print("Checking new tag")
                     check_tag_duplicate = models.Tags.query.filter_by(tag_name=new_tag).all()
-                    print(check_tag_duplicate)
                     if check_tag_duplicate == []:
                         add_tag = models.Tags(tag_name=new_tag)
                         db.session.add(add_tag)
@@ -186,7 +234,6 @@ def add_photo():
             
 
                 tags_chosen = form.tags.data
-                print(tags_chosen)
 
                 find_tag_id = models.Tags.query.filter(models.Tags.id.in_(tags_chosen)).all()
                 tag_id_list = [(str(tag.id)) for tag in find_tag_id]
@@ -199,7 +246,6 @@ def add_photo():
                 
                 db.session.commit()
             else:
-                print("Photo already in database.")
                 duplicate_found = True
 
 
