@@ -80,7 +80,6 @@ def gallery():
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('gallery.html', id_url=id_url, form=form, display_all=display_all)
     else:  # its a POST, the user clicked SUBMIT
-        print("post")
         if form.options.data == None:
             return redirect("gallery.html")
         else:
@@ -157,8 +156,6 @@ def add_photo():
     all_locations = models.Locations.query.all()
     locations_for_form = [(str(location.id), location.location_name) for location in all_locations]
     form.locations.choices = locations_for_form
-
-
 
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('add.html', form=form)
