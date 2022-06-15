@@ -211,7 +211,6 @@ input[type=button], input[type=submit], input[type=reset] {
   border: 2px solid white;
   border-radius: 2%;
   padding-left: 5%;
-  
 }
 
 .setting_grid{
@@ -235,3 +234,12 @@ input[type=button], input[type=submit], input[type=reset] {
 .invert { 
   filter: invert(100%); 
 }
+
+#filters{
+  display: none;
+}
+
+
+
+
+

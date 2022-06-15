@@ -4,36 +4,43 @@
 <div class="gallery">
 <h1>Gallery</h1>
 
-<form method="POST" action="" enctype="multipart/form-data">
-<p>Filter images: {{ form.options }}</p>
-<input type="submit" value="Submit">
+
+<button onclick="filterfunction()">Filter</button>
+<div id="filters">
+    <form method="POST" action="" enctype="multipart/form-data"></form>
+    <p>{{ form.options }}</p>
+    <input type="submit" value="Submit">
+</div>
+
 
 {% if display_all == True%}
     <div class="grid">
-
         {% for picture in id_url %}
-
-                <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
-
+            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
         {% endfor %}
-
-
     </div>
 {% endif %}
 
 {% if display_all == False%}
     <div class="grid">
-
         {% for picture in image_url %}
-
             <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[0][1]}}"></a>
-
         {% endfor %}
-
-
     </div>
 {% endif %}
 
 </div>
 
+<script>
+function filterfunction() {
+    var filter = document.getElementById("filters");
+    if (filter.style.display !== "none") {
+        filter.style.display = "none";
+    } else {
+        filter.style.display = "block";
+    }
+}
+</script>
 {% endblock %}
+
+
