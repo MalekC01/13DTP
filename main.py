@@ -30,8 +30,6 @@ def home():
     pictures_for_slideshow = models.Photo.query.filter_by(orientation="Landscape").all()
     images_id_slides = [(str(id.id), id.url) for id in pictures_for_slideshow]
     random_index = random.sample(images_id_slides, 3)
-
-
     return render_template('home.html', title="Home", random_index=random_index)
 
 #sends error redirects to error page
@@ -56,7 +54,6 @@ def level_2():
 def level_3():
     all_level_3_images = models.Photo.query.filter_by(ncea=3).all()
     level_3 = [(str(images.id), images.url) for images in all_level_3_images]
-    
     return render_template('level_3.html', level_3=level_3)
 
 #gallery queriies to display images
@@ -81,7 +78,7 @@ def gallery():
         return render_template('gallery.html', id_url=id_url, form=form, display_all=display_all)
     else:  # its a POST, the user clicked SUBMIT
         if form.options.data == None:
-            return redirect("gallery.html")
+            return redirect("/gallery")
         else:
             image_url = None
             display_all = False
@@ -111,6 +108,7 @@ def gallery():
                 urls.append(image_url)
             #randomises order to be displayed
             random.shuffle(urls)
+
 
             return render_template('gallery.html', form=form, image_url=urls, display_all=display_all)
 
