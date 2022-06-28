@@ -128,8 +128,10 @@ def photo(id):
         format_of_image = "Landscape"
 
     #queries database for all tags linked with selected
+    id = str(id)
     tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
     tags_of_image = [(tags.tid) for tags in tags_for_image]
+    print("tags" + str(tags_of_image))
 
     list_of_tags = []
     for all_tags in tags_of_image:
@@ -137,7 +139,7 @@ def photo(id):
         tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
         list_of_tags.append(tags_name)
 
-
+    print("list of tags: " + str(list_of_tags))
     return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image)
 
 #add new images to databsae
@@ -203,11 +205,19 @@ def add_photo():
                 #if new tag isnt empty add to database
                 new_tag = form.new_tag.data
                 if new_tag != '':
-                    check_tag_duplicate = models.Tags.query.filter_by(tag_name=new_tag).all()
-                    if check_tag_duplicate == []:
-                        add_tag = models.Tags(tag_name=new_tag)
-                        db.session.add(add_tag)
-                        db.session.commit()
+                    print("All new tags added: " + new_tag)
+                    tags_formated = []
+                    tags_formated.append(new_tag.split(", "))
+                    print("After format: " + str(tags_formated[0]))
+                    
+                    for duplicate in tags_formated[0]:
+                        print("duplicate: " + str(duplicate))
+                        check_tag_duplicate = models.Tags.query.filter_by(tag_name=duplicate).all()
+                        print("check: " + str(check_tag_duplicate))
+                        if check_tag_duplicate == []:
+                            add_tag = models.Tags(tag_name=duplicate)
+                            db.session.add(add_tag)
+                            db.session.commit()
 
                 #add image with all data from form and image file 
                 add_photo_url = models.Photo(url=photo_url, location=location_id, ncea=ncea_level, orientation=orientation)

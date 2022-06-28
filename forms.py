@@ -9,11 +9,11 @@ class MultiCheckboxField(SelectMultipleField):
 
 class Add_Photo(FlaskForm):
     ncea = RadioField('ncea', choices=[('Level 2','Level 2'),('Level 3','Level 3'), ('Not for NCEA','Not for NCEA')], validators=[DataRequired()])
-    tags = MultiCheckboxField('tags', validators=[DataRequired()])
+    tags = MultiCheckboxField('tags')
     new_tag = TextField('new_tag')
-    locations = RadioField('locations', validators=[DataRequired()])
+    locations = RadioField('locations')
     new_location = TextField('new_location')
-    orientation = RadioField('ncea', choices=[('Portrait','Portrait'), ('Landscape','Landscape') ], validators=[DataRequired()])
+    orientation = RadioField('orientation', choices=[('Portrait','Portrait'), ('Landscape','Landscape') ], validators=[DataRequired()])
 
 class Filter_images(FlaskForm):
     options = MultiCheckboxField('options')

@@ -123,39 +123,17 @@ main{
 }
 
 
-.grid{
+#grid{
   line-height:0;
-  -webkit-column-count:3; /* split it into 5 columns */
-  -webkit-column-gap:5px; /* give it a 5px gap between columns */
-  -moz-column-count:3;
-  -moz-column-gap:5px;
   column-count:3;
   column-gap:5px;
 }
 
-.grid img{
+#grid img{
   width: 100% !important;
   height: auto !important;
   margin-bottom:5px; /* to match column gap */
 }
-
-
-.level_2_grid{
-  line-height:0;
-  -webkit-column-count:3; /* split it into 5 columns */
-  -webkit-column-gap:5px; /* give it a 5px gap between columns */
-  -moz-column-count:3;
-  -moz-column-gap:5px;
-  column-count:3;
-  column-gap:5px;
-}
-
-.level_2_grid img{
-  width: 100% !important;
-  height: auto !important;
-  margin-bottom:5px; /* to match column gap */
-}
-
 
 input[type=text] {
   border: none;
@@ -253,11 +231,12 @@ input[type=button], input[type=submit], input[type=reset] {
   padding: 8px;
 }
 
-.info input[type=submit]{
-  border-radius: 5px;
-  border: 2px solid grey;
-  background-color: rgb(56, 56, 56);
-  padding: 8px;
+.no_tags{
+  border: solid 2px white;
+  margin-left: 20px;
+  padding: 10px;
+  margin-right: 200px;
 }
+
 
 

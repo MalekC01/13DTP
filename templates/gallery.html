@@ -3,23 +3,23 @@
 
 
 <div class="info">
-    <h2>About:</h2>
+    <h2>About</h2>
     <p>This is a gallery of all images. To filter check tags that you would like to view specificly.</p>
     <button onclick="filterfunction()">Filter</button>
     <div id="filters">
         <form method="POST" action="" enctype="multipart/form-data">
-        <p>{{ form.options }}</p>
+            <p>{{ form.options }}</p>
+        <div class="submit_filter">
         <input type="submit" value="Submit">
-    </form>
-</div>
-
-
+        </div>
+        </form>
+    </div>
 </div>
 
 <div class="gallery">
 
 {% if display_all == True%}
-    <div class="grid">
+    <div id="grid">
         {% for picture in id_url %}
             <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
         {% endfor %}
@@ -27,12 +27,19 @@
 {% endif %}
 
 {% if display_all == False%}
-    <div class="grid">
+    
+        {% if image_url != [] %}
         {% for picture in image_url %}
+        <div id="grid">
             <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[0][1]}}"></a>
+        </div>
         {% endfor %}
-        
-    </div>
+        {% else %}
+        <div class="no_tags">
+            <h2>There are currently no images with tag(s) selected. Try again with differnt tags.</h2>
+        </div>
+        {% endif %}
+    
 {% endif %}
 
 </div>
@@ -40,10 +47,10 @@
 <script>
 function filterfunction() {
     var filter = document.getElementById("filters");
-    if (filter.style.display !== "none") {
-        filter.style.display = "none";
-    } else {
+    if (filter.style.display !== "block") {
         filter.style.display = "block";
+    } else {
+        filter.style.display = "none";
     }
 }
 </script>
