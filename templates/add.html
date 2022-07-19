@@ -15,26 +15,15 @@
     <input type="file" name="display-image" id="display-image" accept=".jpeg, .png", onchange="showPreview(event);">
     <br>
     <div class="preview">
-      
       <img id="display-image-preview">
     </div>
-
-
 
     <p>Image orientation: {{form.orientation}}</p>
     <p>Ncea Level: {{ form.ncea }} </p>
 
-    
-
     <p>Tags: <br> {{ form.tags }} </p>
-   
-    <h3>Use commas to seperate new tags. E.g. Nature, Astro</h3>
-    <p>New tag: <br> {{ form.new_tag }} </p>
-
-
-
+    <p>New tag: <br> {{ form.new_tag(placeholder="Layout: 1, 2, 3")}} </p>
     <p>Locations: <br> {{ form.locations }} </p>
-
     <p>New location: <br> {{ form.new_location }} </p>
 
 

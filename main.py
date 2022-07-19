@@ -131,7 +131,6 @@ def photo(id):
     id = str(id)
     tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
     tags_of_image = [(tags.tid) for tags in tags_for_image]
-    print("tags" + str(tags_of_image))
 
     list_of_tags = []
     for all_tags in tags_of_image:
@@ -139,7 +138,6 @@ def photo(id):
         tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
         list_of_tags.append(tags_name)
 
-    print("list of tags: " + str(list_of_tags))
     return render_template('photo.html', title="Info", info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image)
 
 #add new images to databsae
@@ -205,19 +203,25 @@ def add_photo():
                 #if new tag isnt empty add to database
                 new_tag = form.new_tag.data
                 if new_tag != '':
-                    print("All new tags added: " + new_tag)
                     tags_formated = []
-                    tags_formated.append(new_tag.split(", "))
-                    print("After format: " + str(tags_formated[0]))
+                    tags_formated = new_tag.split(", ")
                     
-                    for duplicate in tags_formated[0]:
-                        print("duplicate: " + str(duplicate))
+                    found_new_tag_ids = []
+                    for duplicate in tags_formated:
                         check_tag_duplicate = models.Tags.query.filter_by(tag_name=duplicate).all()
-                        print("check: " + str(check_tag_duplicate))
                         if check_tag_duplicate == []:
                             add_tag = models.Tags(tag_name=duplicate)
                             db.session.add(add_tag)
                             db.session.commit()
+            
+                            find_new_tag_id = models.Tags.query.filter_by(tag_name=duplicate).all()
+                            found_new_tag_ids += find_new_tag_id
+                            found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
+                            
+
+                                
+     
+
 
                 #add image with all data from form and image file 
                 add_photo_url = models.Photo(url=photo_url, location=location_id, ncea=ncea_level, orientation=orientation)
@@ -231,12 +235,18 @@ def add_photo():
             
                 #uses photo id from previous query as well as tag ids, adds to join table
                 tags_chosen = form.tags.data
-                find_tag_id = models.Tags.query.filter(models.Tags.id.in_(tags_chosen)).all()
+                find_tag_id = []
+                for tag in tags_chosen:
+                    find_tag_id += models.Tags.query.filter_by(tag_name=tags_chosen).all()
+                    print("Lists joined: " + find_tag_id)
                 tag_id_list = [(str(tag.id)) for tag in find_tag_id]
+                
+                tag_id_list = tag_id_list + found_new_tag_ids
+                
                 for tag in tag_id_list:
                     add_tag_and_photo = models.Photo_tag(pid=photo_id, tid=tag)
                     db.session.add(add_tag_and_photo)
-                db.session.commit()
+                    db.session.commit()
             else:
                 duplicate_found = True
             return render_template('add.html', form=form, filename=filename, title="Add", duplicate_found=duplicate_found)
