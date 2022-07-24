@@ -22,6 +22,10 @@ WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
 
+#sends error redirects to error page
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html'), 404
 
 #home page route
 @app.route('/', methods=['GET', 'POST'])
@@ -32,10 +36,14 @@ def home():
     random_index = random.sample(images_id_slides, 3)
     return render_template('home.html', title="Home", random_index=random_index)
 
-#sends error redirects to error page
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('error.html'), 404
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = forms.LoginForm()
+    
+    if form.validate():
+        check_username_exists = models.Users.query.filter_by(username=form.data.username).first()
+        print("Username"+ str(check_username_exists))
+    return render_template('login.html', title="Login")
 
 #page for all ncea images
 @app.route('/ncea', methods=['GET', 'POST'])

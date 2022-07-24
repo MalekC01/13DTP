@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, IntegerField, TextAreaField, SubmitField, RadioField, SelectField, SelectMultipleField, widgets
+from wtforms import TextField, StringField, IntegerField, TextAreaField, SubmitField, RadioField, SelectField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, Optional, ValidationError
 import models
 
@@ -17,3 +17,7 @@ class Add_Photo(FlaskForm):
 
 class Filter_images(FlaskForm):
     options = MultiCheckboxField('options')
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[DataRequired()])
+    password = StringField('password', validators=[DataRequired()])
