@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, StringField, IntegerField, TextAreaField, SubmitField, RadioField, SelectField, SelectMultipleField, widgets
+from wtforms import TextField, StringField, IntegerField, TextAreaField, SubmitField, RadioField, SelectField, SelectMultipleField, widgets, PasswordField
 from wtforms.validators import DataRequired, Optional, ValidationError
 import models
 
@@ -20,4 +20,4 @@ class Filter_images(FlaskForm):
 
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
-    password = StringField('password', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])

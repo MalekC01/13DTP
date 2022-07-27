@@ -2,9 +2,11 @@
 {% block content %}
 
 <div class="Login_Form">
+<form method="POST" action="" enctype="multipart/form-data">
 <h1>Login</h1>
-{{ form.username }}
-{{ form.password }}
+{{ form.username(placeholder="Username") }}
+<br>
+{{ form.password(placeholder="Password") }}
 </div>
-
+<input type="submit" value="Submit">
 {% endblock %}

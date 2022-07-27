@@ -22,6 +22,8 @@ WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
 
+logged_in = False
+
 #sends error redirects to error page
 @app.errorhandler(404)
 def page_not_found(e):
@@ -39,11 +41,19 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = forms.LoginForm()
-    
-    if form.validate():
-        check_username_exists = models.Users.query.filter_by(username=form.data.username).first()
-        print("Username"+ str(check_username_exists))
-    return render_template('login.html', title="Login")
+    if request.method=='GET':  # did the browser ask to see the page
+        return render_template('login.html', form=form)
+    else:
+        check_username_exists = models.Users.query.filter_by(username=form.username.data).first()
+        print("Username" + str(check_username_exists))
+        data_for_user = [(str(userdata.password), str(userdata.username)) for userdata in check_username_exists]
+        print('Password' + str(data_for_user))
+        if check_username_exists != None:
+            find_password = models.Users.query.filter_by(password=data_for_user[0])
+            if find_password == data_for_user[0]:
+                print("Password correct, login")
+                logged_in = True
+                return redirect('/')
 
 #page for all ncea images
 @app.route('/ncea', methods=['GET', 'POST'])
