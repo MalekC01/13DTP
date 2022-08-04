@@ -3,7 +3,9 @@
     <a href="/add">Add to database</a>
     <a href="/gallery">Gallery</a>
     <a href="/ncea">Ncea</a>
+    {% if logged_in != True %}
     <div class="nav_login">
         <a href="/login">Login</a>
     </div>
+    {% endif %}
 </div>

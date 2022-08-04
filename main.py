@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert
@@ -22,7 +22,6 @@ WTF_CSRF_SECRET_KEY = 'sup3r_secr3t_passw3rd'
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
 
-logged_in = False
 
 #sends error redirects to error page
 @app.errorhandler(404)
@@ -44,16 +43,22 @@ def login():
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('login.html', form=form)
     else:
-        check_username_exists = models.Users.query.filter_by(username=form.username.data).first()
-        print("Username" + str(check_username_exists))
-        data_for_user = [(str(userdata.password), str(userdata.username)) for userdata in check_username_exists]
-        print('Password' + str(data_for_user))
+        username = form.username.data
+        check_username_exists = models.Users.query.filter_by(username=username).all()
+        
         if check_username_exists != None:
-            find_password = models.Users.query.filter_by(password=data_for_user[0])
-            if find_password == data_for_user[0]:
+            data_for_user = [(str(userdata.id), str(userdata.password)) for userdata in check_username_exists]
+            print("Data for users: " + str(data_for_user))
+
+            find_password = str(form.password.data)
+    
+            if find_password == data_for_user[0][1]:
                 print("Password correct, login")
                 logged_in = True
-                return redirect('/')
+                return render_template('login.html', form=form, logged_in=logged_in)
+        else:
+            flash("Username or password is incorrect please try again!")
+            return render_template('login.html', form=form)
 
 #page for all ncea images
 @app.route('/ncea', methods=['GET', 'POST'])
