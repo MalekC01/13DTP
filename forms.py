@@ -21,3 +21,12 @@ class Filter_images(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
+
+class EditPhotoInfo(FlaskForm):
+    ncea = RadioField('ncea', choices=[('Level 2','Level 2'),('Level 3','Level 3'), ('Not for NCEA','Not for NCEA')], validators=[DataRequired()])
+    tags = MultiCheckboxField('tags')
+    new_tag = TextField('new_tag')
+    locations = RadioField('locations')
+    new_location = TextField('new_location')
+    orientation = RadioField('orientation', choices=[('Portrait','Portrait'), ('Landscape','Landscape') ], validators=[DataRequired()])
+

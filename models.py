@@ -36,4 +36,4 @@ class Users(db.Model):
   __tablename__ = "Users"
   id = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
   username = db.Column(db.String(), nullable=False)
-  password = tag_name = db.Column(db.String(), nullable=False)
+  password = db.Column(db.String(), nullable=False)

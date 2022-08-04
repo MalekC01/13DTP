@@ -42,6 +42,21 @@
         {% for tag_name in list_of_tags%}
             <a href="/gallery?options=5"><li>{{tag_name[0]}}</li></a>
         {% endfor %}
+
+
+        {% if logged_in %}
+        <p>Image orientation: {{form.orientation}}</p>
+        <p>Ncea Level: {{ form.ncea }} </p>
+        <p>Tags: <br> {{ form.tags }} </p>
+        <p>New tag: <br> {{ form.new_tag(placeholder="Layout: 1, 2, 3")}} </p>
+        <p>Locations: <br> {{ form.locations }} </p>
+        <p>New location: <br> {{ form.new_location }} </p>
+
+        <input type="submit" value="Submit">
+        {% endif %}
+
+
+
     </div>
 
 
