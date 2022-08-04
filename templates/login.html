@@ -3,10 +3,16 @@
 
 <div class="Login_Form">
 <form method="POST" action="" enctype="multipart/form-data">
+{% if logged_in %}
+<h1>You are now logged in</h1>
+{% endif %}
+
+{% if logged_in != True %}
 <h1>Login</h1>
 {{ form.username(placeholder="Username") }}
 <br>
 {{ form.password(placeholder="Password") }}
 </div>
 <input type="submit" value="Submit">
+{% endif %}
 {% endblock %}

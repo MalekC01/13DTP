@@ -244,7 +244,7 @@ def photo(id):
 
                 #delete query
 
-                
+
                 add_photo_url = models.Photo(location=location_id, ncea=ncea_level, orientation=orientation)
                 db.session.add(add_photo_url)
                 db.session.commit()
