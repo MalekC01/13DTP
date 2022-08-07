@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import insert
+from sqlalchemy import insert, update
 from config import Config
 import random
 
@@ -156,123 +156,101 @@ def gallery():
 
 @app.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
-    form = forms.EditPhotoInfo()
-    logged_in = check_logged_in()
-    #queries image selected to retireve
-    image_data = models.Photo.query.filter_by(id=id).all()
-    info_of_image = [(str(info.id), info.url, info.orientation) for info in image_data]
-    data_for_image = exif_for_image(info_of_image)
+    if request.method=='GET':
+        form = forms.EditPhotoInfo()
+        logged_in = check_logged_in()
+        #queries image selected to retireve
+        image_data = models.Photo.query.filter_by(id=id).all()
+        info_of_image = [(str(info.id), info.url, info.orientation) for info in image_data]
+        data_for_image = exif_for_image(info_of_image)
 
-    #used so can change depedniding orrientation of image
-    if info_of_image[0][2] == "Portrait":
-        format_of_image = "Portrait"
+        #used so can change depedniding orrientation of image
+        if info_of_image[0][2] == "Portrait":
+            format_of_image = "Portrait"
+        else:
+            format_of_image = "Landscape"
+
+        #queries database for all tags linked with selected
+        id = str(id)
+        tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
+        tags_of_image = [(tags.tid) for tags in tags_for_image]
+
+        list_of_tags = []
+        for all_tags in tags_of_image:
+            tags_id_image = models.Tags.query.filter_by(id=all_tags).all()
+            tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
+            list_of_tags.append(tags_name)
+        return render_template('photo.html', title="Info", logged_in=logged_in, info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image, form=form)
+
     else:
-        format_of_image = "Landscape"
+        #Edit form for each image
+        #query database for all tags
+        all_tags = models.Tags.query.all()
+        tags_for_form = [(str(tag.id), tag.tag_name) for tag in all_tags]
+        form.tags.choices = tags_for_form
 
-    #queries database for all tags linked with selected
-    id = str(id)
-    tags_for_image = models.Photo_tag.query.filter_by(pid=id).all()
-    tags_of_image = [(tags.tid) for tags in tags_for_image]
-
-    list_of_tags = []
-    for all_tags in tags_of_image:
-        tags_id_image = models.Tags.query.filter_by(id=all_tags).all()
-        tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
-        list_of_tags.append(tags_name)
-
-    #Edit form for each image
-    #query database for all tags
-    all_tags = models.Tags.query.all()
-    tags_for_form = [(str(tag.id), tag.tag_name) for tag in all_tags]
-    form.tags.choices = tags_for_form
-
-    #query database for all previous locations
-    all_locations = models.Locations.query.all()
-    locations_for_form = [(str(location.id), location.location_name) for location in all_locations]
-    form.locations.choices = locations_for_form
+        #query database for all previous locations
+        all_locations = models.Locations.query.all()
+        locations_for_form = [(str(location.id), location.location_name) for location in all_locations]
+        form.locations.choices = locations_for_form
 
 
-                #Take ncea input from form and get ready to be inputted into database
-                orientation = form.orientation.data
+        #Take ncea input from form and get ready to be inputted into database
+        orientation = form.orientation.data
 
-                #ncea data from form
-                ncea_level = form.ncea.data
-                if ncea_level == "Level 2":
-                    ncea_level = "2"
-                elif ncea_level == "Level 3":
-                    ncea_level = "3"
-                else:
-                    ncea_level = "Not NCEA"
+        #ncea data from form
+        ncea_level = form.ncea.data
+        if ncea_level == "Level 2":
+            ncea_level = "2"
+        elif ncea_level == "Level 3":
+            ncea_level = "3"
+        else:
+            ncea_level = "Not NCEA"
 
-                #location data from form
-                locations_chosen = form.locations.data
-                new_location = form.new_location.data
-                #if new location tag isnt empty add to database
-                if new_location != '':
-                    #change to if any instead of querying all
-                    check_location_duplicate = models.Locations.query.filter_by(location_name=new_location).all()
-                    if check_location_duplicate == []:
-                        add_location = models.Locations(location_name=new_location)
-                        db.session.add(add_location)
-                        db.session.commit()
-                    find_location_id = models.Locations.query.filter_by(location_name=new_location).all()
-                    location_id_list = [(str(location.id)) for location in find_location_id]
-                    location_id = location_id_list[0]
-                else:
-                    location_id = form.locations.data
+        #location data from form
+        # locations_chosen = form.locations.data
+        # new_location = form.new_location.data
+        #if new location tag isnt empty add to database
+        # if new_location != '':
+        #     #change to if any instead of querying all
+        #     check_location_duplicate = models.Locations.query.filter_by(location_name=new_location).all()
+        #     if check_location_duplicate == []:
+        #         add_location = models.Locations(location_name=new_location)
+        #         db.session.add(add_location)
+        #         db.session.commit()
+        #     find_location_id = models.Locations.query.filter_by(location_name=new_location).all()
+        #     location_id_list = [(str(location.id)) for location in find_location_id]
+        #     location_id = location_id_list[0]
+        # else:
+        #     location_id = form.locations.data
 
-                #if new tag isnt empty add to database
-                new_tag = form.new_tag.data
-                if new_tag != '':
-                    tags_formated = []
-                    tags_formated = new_tag.split(", ")
+        # #if new tag isnt empty add to database
+        # new_tag = form.new_tag.data
+        # if new_tag != '':
+        #     tags_formated = []
+        #     tags_formated = new_tag.split(", ")
+            
+        #     found_new_tag_ids = []
+        #     for duplicate in tags_formated:
+        #         check_tag_duplicate = models.Tags.query.filter_by(tag_name=duplicate).all()
+        #         if check_tag_duplicate == []:
+        #             add_tag = models.Tags(tag_name=duplicate)
+        #             db.session.add(add_tag)
+        #             db.session.commit()
+
+        #             find_new_tag_id = models.Tags.query.filter_by(tag_name=duplicate).all()
+        #             found_new_tag_ids += find_new_tag_id
+        #             found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
                     
-                    found_new_tag_ids = []
-                    for duplicate in tags_formated:
-                        check_tag_duplicate = models.Tags.query.filter_by(tag_name=duplicate).all()
-                        if check_tag_duplicate == []:
-                            add_tag = models.Tags(tag_name=duplicate)
-                            db.session.add(add_tag)
-                            db.session.commit()
-            
-                            find_new_tag_id = models.Tags.query.filter_by(tag_name=duplicate).all()
-                            found_new_tag_ids += find_new_tag_id
-                            found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
-                            
 
-                #add image with all data from form and image file 
+        #add image with all data from form and image file 
 
-                #delete query
-
-
-                add_photo_url = models.Photo(location=location_id, ncea=ncea_level, orientation=orientation)
-                db.session.add(add_photo_url)
-                db.session.commit()
-
-                #find image id within database after being commited so next query can be made
-                find_photo_id = models.Photo.query.filter_by(url=photo_url).all()
-                photo_id_list = [(str(photo.id)) for photo in find_photo_id]
-                photo_id = photo_id_list[-1]
-            
-                #uses photo id from previous query as well as tag ids, adds to join table
-                tags_chosen = form.tags.data
-                find_tag_id = []
-                for tag in tags_chosen:
-                    find_tag_id += models.Tags.query.filter_by(tag_name=tags_chosen).all()
-                    print("Lists joined: " + find_tag_id)
-                tag_id_list = [(str(tag.id)) for tag in find_tag_id]
-                
-                tag_id_list = tag_id_list + found_new_tag_ids
-                
-                for tag in tag_id_list:
-                    add_tag_and_photo = models.Photo_tag(pid=photo_id, tid=tag)
-                    db.session.add(add_tag_and_photo)
-                    db.session.commit()
-            else:
-                duplicate_found = True
-            return render_template('add.html', logged_in=logged_in, form=form, filename=filename, title="Add", duplicate_found=duplicate_found)
-        return render_template('add.html', logged_in=logged_in, form=form, title="Add")
-
+        #update query
+        info = models.Photo.query.filter_by(id=id).first()
+        info.orientation = form.orientation.data  
+        info.ncea = form.ncea.data
+        info.location = form.locations.data
+        db.session.commit()
 
     return render_template('photo.html', title="Info", logged_in=logged_in, info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image, form=form)
 
