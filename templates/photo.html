@@ -36,6 +36,8 @@
 
             <p><b>Apperture:</b> {{data_for_image[3]}}</p>
 
+            <p>{{ image_data.url }}</p>
+
         </div>
 
         <h3>Tags:</h3>
@@ -45,6 +47,8 @@
 
 
         {% if logged_in %}
+        <form method="POST" action="" enctype="multipart/form-data">
+
         <p>Image orientation: {{form.orientation}}</p>
         <p>Ncea Level: {{ form.ncea }} </p>
         <p>Tags: <br> {{ form.tags }} </p>
@@ -53,6 +57,8 @@
         <p>New location: <br> {{ form.new_location }} </p>
 
         <input type="submit" value="Submit">
+
+        </form>
         {% endif %}
 
 

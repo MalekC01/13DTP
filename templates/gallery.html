@@ -21,8 +21,8 @@
 
 {% if display_all == True%}
     <div id="grid">
-        {% for picture in id_url %}
-            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
+        {% for picture in url_of_all_images %}
+            <a class="link_info" href="/photo/{{picture.id}}"><img src="/static/images/{{picture.url}}"></a>
         {% endfor %}
     </div>
 {% endif %}

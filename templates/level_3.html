@@ -6,8 +6,8 @@
 </div>
 
 <div class="level_3_grid"></div>
-{% for images in level_3 %}
-    <a href="/photo/{{images[0]}}"><img src="/static/images/{{images[1]}}"></a>
+{% for image in all_level_3_images %}
+    <a href="/photo/{{image.id}}"><img src="/static/images/{{image.url}}"></a>
 {% endfor %}
 </div>
 

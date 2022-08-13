@@ -2,6 +2,12 @@ from sqlalchemy import ForeignKey
 from main import db
 
 
+Photo_tag = db.Table("Photo_tag", db.Model.metadata,
+  db.Column("pid", db.Integer, db.ForeignKey('Photo.id')),
+  db.Column("tid", db.Integer, db.ForeignKey('Tag.id'))
+)
+
+
 class Photo(db.Model):
   __tablename__ = "Photo"
   id = db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
@@ -10,21 +16,16 @@ class Photo(db.Model):
   ncea = db.Column(db.Integer(), nullable=False)
   orientation = db.Column(db.String(), nullable=False)
 
-  # def __repr__(self):
-  #   return f'{self.name.upper()} Photo' 
+  tags = db.relationship('Tag', secondary=Photo_tag, back_populates='photos')
 
 
-class Tags(db.Model):
-  __tablename__ = "Tags"
+class Tag(db.Model):
+  __tablename__ = "Tag"
   id = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
   tag_name = db.Column(db.String(), nullable=False)
 
+  photos = db.relationship('Photo', secondary=Photo_tag, back_populates='tags')
   
-
-class Photo_tag(db.Model):
-  __tablename__ = "Photo_tag"
-  pid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
-  tid = db.Column(db.Integer(), primary_key=True, nullable=False, unique=True)
 
 
 class Locations(db.Model):
