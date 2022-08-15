@@ -53,7 +53,7 @@ def login():
     else:
         check_username_exists = models.Users.query.filter_by(username=form.username.data).first()
         if check_username_exists != None:
-            if form.password.data == check_username_exists.password:
+            if str(form.password.data) == str(check_username_exists.password):
                 session['username'] = form.username.data
                 return redirect('/')
             else:
@@ -62,7 +62,6 @@ def login():
         else:
             # username doen't exist
             pass
-        
         return render_template('login.html', form=form)
 
 
@@ -100,8 +99,8 @@ def gallery():
     
     #queries database for all current tags, returns so can dusplay for filtering
     all_tags = models.Tag.query.all()
-    tags_for_filter = [(str(tag.id), tag.tag_name) for tag in all_tags]
-    form.options.choices = tags_for_filter
+    tags_for_filter_buttons = [(str(tag.id), tag.tag_name) for tag in all_tags]
+    form.options.choices = tags_for_filter_buttons
 
     #queries for all images in database and returns with url so src can display in html
     url_of_all_images = models.Photo.query.all()
@@ -123,8 +122,8 @@ def gallery():
             tags_to_search = []
             for tag_ids in form.options.data:
                 chosen_tags = models.Tag.query.filter_by(id=tag_ids).all()
-                images_that_fit_filter = [(str(tag.id)) for tag in chosen_tags]
-                tags_to_search.append(images_that_fit_filter)
+                #images_that_fit_filter = [(str(tag.id)) for tag in chosen_tags]
+                tags_to_search.append(chosen_tags.id)
             
             #uses tag ids to then find the images that contain that tag
             photo_ids = []
@@ -151,27 +150,26 @@ def photo(id):
     form = forms.EditPhotoInfo()
     logged_in = check_logged_in()
 
-    #queries image selected to retireve
-    image_data = models.Photo.query.filter_by(id=id).first()
-    data_for_image = exif_for_image(info_of_image)
+    #queries image selected to retireve info
+    image_data = models.Photo.query.filter_by(id=id).first_or_404()
+    data_for_image = exif_for_image(image_data)
 
     #used so can change depedniding orrientation of image
-    if info_of_image[0][2] == "Portrait":
+    if image_data.orientation == "Portrait":
         format_of_image = "Portrait"
     else:
         format_of_image = "Landscape"
 
     #queries database for all tags linked with selected
-    photo = models.Photo.query.filter_by(id=id).first_or_404()
-    tag = models.Tag.query.filter_by(id=7).first_or_404()
-    photo.tags.append(tag)
-    db.session.commit()
-    print(photo.tags, photo, id)
-    for tag in photo.tags:
-        print(tag.tag_name)
+    
+    # tag = models.Tag.query.filter_by(id=7).first_or_404()
+    # photo.tags.append(tag)
+    # db.session.commit()
+    print("all tags linked with image: ")
+    print(image_data.tags)
 
     list_of_tags = []
-    for all_tags in tags_of_image:
+    for all_tags in image_data.tags:
         tags_id_image = models.Tag.query.filter_by(id=all_tags).all()
         tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
         list_of_tags.append(tags_name)
@@ -183,6 +181,7 @@ def photo(id):
     all_locations = models.Locations.query.all()
     locations_for_form = [(str(location.id), location.location_name) for location in all_locations]
     form.locations.choices = locations_for_form
+
     if request.method=='GET':
         return render_template('photo.html', title="Info", logged_in=logged_in, info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image, form=form)
 
