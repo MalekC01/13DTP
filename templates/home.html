@@ -1,7 +1,7 @@
 {% extends 'layout.html' %} 
 {% block content %}
 
-
+{% if random_index != None %}
 <div class="slideshow-container">
     <center>
         <!-- Full-width images with number and caption text -->
@@ -35,7 +35,7 @@
         <span class="dot" onclick="currentSlide(3)"></span>
 
       </div>
-
+{% endif %}
 
 
 

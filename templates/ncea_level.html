@@ -1,0 +1,17 @@
+{% extends 'layout.html' %} 
+{% block content %}
+
+
+<div class="back_button">
+    <a href="/ncea"><img src="/static/images/Icons/arrow_back_FILL0_wght700_GRAD200_opsz20.png" class="invert"><b> Back To Ncea</b></a>
+    </div>
+
+<div id="ncea_grid">
+{% for image in all_chosen_level_photos %}
+    <a href="/photo/{{image.id}}"><img src="/static/images/{{image.url}}"></a>
+{% endfor %}
+
+</div>
+
+
+{% endblock %}

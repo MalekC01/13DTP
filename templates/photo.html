@@ -8,41 +8,33 @@
 <div class="info_grid">
 
 
-    
-
-    {% if format_of_image == "Portrait"%}
-    <div class="info_image_portrait">
-        <img src="/static/images/{{info_of_image[0][1]}}">
+    <div class="info_image_{{photo.orientation|lower}}">
+        <img src="/static/images/{{photo.url}}">
     </div>
-
-    {% elif format_of_image == "Landscape" %}
-
-    <div class="info_image_landscape">
-        <img src="/static/images/{{info_of_image[0][1]}}">
-    </div>
-
-    {% endif %}
 
     <div class="information_of_image">
         
         
         <h1>Info</h1>
+        {% if exif_data != None%}
         <div class="setting_grid">
-            <p><b>Focal Length:</b> {{data_for_image[0]}}</p>
+            <p><b>Focal Length:</b> {{exif_data.focal_length}}</p>
 
-            <p><b>Date:</b> {{data_for_image[1]}}</p>
+            <p><b>Date:</b> {{exif_data.date}}</p>
 
-            <p><b>Exposure Length:</b> {{data_for_image[2]}}s</p>
+            <p><b>Exposure Length:</b> {{exif_data.exposure_time}}s</p>
 
-            <p><b>Apperture:</b> {{data_for_image[3]}}</p>
+            <p><b>Apperture:</b> {{exif_data.aperture}}</p>
 
             <p>{{ image_data.url }}</p>
-
         </div>
+        {% else %}
+        <p>This image does not have any exif data!</p>
+        {% endif %}
 
         <h3>Tags:</h3>
         {% for tag_name in list_of_tags%}
-            <a href="/gallery?options=5"><li>{{tag_name[0]}}</li></a>
+            <li>{{tag_name.tag_name}}</li>
         {% endfor %}
 
 

@@ -239,13 +239,13 @@ input[type=button], input[type=submit], input[type=reset] {
 }
 
 
-#level_2_grid, #level_3_grid{
+#ncea_grid{
   line-height:0;
   column-count:3;
   column-gap:5px;
 }
 
-#level_2_grid img, #level_3_grid img{
+#ncea_grid img{
   width: 100% !important;
   height: auto !important;
   margin-bottom:5px; /* to match column gap */

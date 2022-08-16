@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, flash
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert, update, delete
@@ -36,7 +36,10 @@ def home():
     #choses random images in correct format to display on home screen
     pictures_for_slideshow = models.Photo.query.filter_by(orientation="Landscape").all()
     images_id_slides = [(str(id.id), id.url) for id in pictures_for_slideshow]
-    random_index = random.sample(images_id_slides, 3)
+    try:
+        random_index = random.sample(images_id_slides, 3)
+    except:
+        random_index = None
     return render_template('home.html', title="Home", random_index=random_index, logged_in=logged_in)
 
 
@@ -77,18 +80,12 @@ def ncea():
     return render_template('ncea.html', logged_in=logged_in)
 
 #all image to do with level 2 ncea
-@app.route('/level_2', methods=['GET', 'POST'])
-def level_2():
+@app.route("/level/<int:ncea>", methods=['GET', 'POST'])
+def image_ncea_level(ncea):
     logged_in = check_logged_in()
-    all_level_2_images = models.Photo.query.filter_by(ncea=2).all()
-    return render_template('level_2.html', all_level_2_images=all_level_2_images, logged_in=logged_in)
+    all_chosen_level_photos = models.Photo.query.filter_by(ncea=ncea).all()
+    return render_template('ncea_level.html', all_chosen_level_photos=all_chosen_level_photos, logged_in=logged_in)
 
-#all images to do with level 3 ncea
-@app.route('/level_3', methods=['GET', 'POST'])
-def level_3():
-    logged_in = check_logged_in()
-    all_level_3_images = models.Photo.query.filter_by(ncea=3).all()
-    return render_template('level_3.html', all_level_3_images=all_level_3_images, logged_in=logged_in)
 
 #gallery queriies to display images
 @app.route('/gallery', methods=['GET', 'POST'])
@@ -150,40 +147,15 @@ def photo(id):
     form = forms.EditPhotoInfo()
     logged_in = check_logged_in()
 
-    #queries image selected to retireve info
-    image_data = models.Photo.query.filter_by(id=id).first_or_404()
-    data_for_image = exif_for_image(image_data)
+    photo = models.Photo.query.filter_by(id=id).first_or_404()
+    exif_data = exif_for_image(photo)
 
-    #used so can change depedniding orrientation of image
-    if image_data.orientation == "Portrait":
-        format_of_image = "Portrait"
-    else:
-        format_of_image = "Landscape"
-
-    #queries database for all tags linked with selected
-    
-    # tag = models.Tag.query.filter_by(id=7).first_or_404()
-    # photo.tags.append(tag)
-    # db.session.commit()
-    print("all tags linked with image: ")
-    print(image_data.tags)
-
-    list_of_tags = []
-    for all_tags in image_data.tags:
-        tags_id_image = models.Tag.query.filter_by(id=all_tags).all()
-        tags_name = [(tags_name.tag_name) for tags_name in tags_id_image]
-        list_of_tags.append(tags_name)
-    
+    list_of_tags = photo.tags
     all_tags = models.Tag.query.all()
-    tags_for_form = [(str(tag.id), tag.tag_name) for tag in all_tags]
-    form.tags.choices = tags_for_form
-
-    all_locations = models.Locations.query.all()
-    locations_for_form = [(str(location.id), location.location_name) for location in all_locations]
-    form.locations.choices = locations_for_form
+    form.tags.choices = [(tag_name.id, str(tag_name.tag_name)) for tag_name in all_tags] 
 
     if request.method=='GET':
-        return render_template('photo.html', title="Info", logged_in=logged_in, info_of_image=info_of_image, data_for_image=data_for_image, tags_of_image=tags_of_image, list_of_tags=list_of_tags, format_of_image=format_of_image, form=form)
+        return render_template('photo.html', title="Info", form=form, photo=photo, exif_data=exif_data, logged_in=logged_in, list_of_tags=list_of_tags)
 
     else:
         #Take ncea input from form and get ready to be inputted into database
@@ -198,14 +170,26 @@ def photo(id):
         else:
             ncea_level = "Not NCEA"
 
-        #if new location tag isnt empty add to database
-        if form.new_location.data != '':
-            #change to if any instead of querying all
-            check_location_duplicate = models.Locations.query.filter_by(location_name=new_location).all()
+        #if no new location has been added
+        if form.new_location.data != "":
+            check_location_duplicate = models.Locations.query.filter_by(location_name=new_location).first_or_404()
             if check_location_duplicate == []:
                 add_location = models.Locations(location_name=new_location)
                 db.session.add(add_location)
                 db.session.commit()
+            else:
+                print("This location is a duplicate!")
+                flash("The new location added is a duplicate! Please select already existing or try again!")
+
+
+
+
+        #if new location tag isnt empty add to database
+        if form.new_location.data != '':
+            #change to if any instead of querying all
+            check_location_duplicate = 
+            if check_location_duplicate == []:
+                
             find_location_id = models.Locations.query.filter_by(location_name=new_location).all()
             location_id_list = [(str(location.id)) for location in find_location_id]
             location_id = location_id_list[0]
@@ -213,8 +197,6 @@ def photo(id):
             location_id = form.locations.data
 
         #add or remove tags 
-
-
 
         #if new tag isnt empty add to database
         new_tag = form.new_tag.data
@@ -324,19 +306,19 @@ def add_photo():
                     location_id = form.locations.data
 
                 #if new tag isnt empty add to database
+                found_new_tag_ids = []
                 new_tag = form.new_tag.data
                 if new_tag != '':
                     tags_formated = []
                     tags_formated = new_tag.split(", ")
                     
-                    found_new_tag_ids = []
+                    
                     for duplicate in tags_formated:
                         check_tag_duplicate = models.Tag.query.filter_by(tag_name=duplicate).all()
                         if check_tag_duplicate == []:
                             add_tag = models.Tag(tag_name=duplicate)
                             db.session.add(add_tag)
                             db.session.commit()
-            
                             find_new_tag_id = models.Tag.query.filter_by(tag_name=duplicate).all()
                             found_new_tag_ids += find_new_tag_id
                             found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
@@ -348,22 +330,15 @@ def add_photo():
                 db.session.commit()
 
                 #find image id within database after being commited so next query can be made
-                find_photo_id = models.Photo.query.filter_by(url=photo_url).all()
-                photo_id_list = [(str(photo.id)) for photo in find_photo_id]
-                photo_id = photo_id_list[-1]
+                find_photo_id = models.Photo.query.filter_by(url=photo_url).first()
             
                 #uses photo id from previous query as well as tag ids, adds to join table
-                tags_chosen = form.tags.data
-                find_tag_id = []
-                for tag in tags_chosen:
-                    find_tag_id += models.Tag.query.filter_by(tag_name=tags_chosen).all()
-                tag_id_list = [(str(tag.id)) for tag in find_tag_id]
+                tag_id_list = form.tags.data + found_new_tag_ids
+                print("tags to add to image: " + str(tag_id_list))
                 
-                tag_id_list = tag_id_list + found_new_tag_ids
-                
-                for tag in tag_id_list:
-                    add_tag_and_photo = models.Photo_tag(pid=photo_id, tid=tag)
-                    db.session.add(add_tag_and_photo)
+                for add_tag in tag_id_list:
+                    add_tag_and_photo = models.Photo.photos.tags.insert(pid=find_photo_id.id, tid=add_tag)
+                    #db.session.add(add_tag_and_photo)
                     db.session.commit()
             else:
                 duplicate_found = True

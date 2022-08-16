@@ -8,9 +8,11 @@
     <form method="POST" action="" enctype="multipart/form-data">
     {{ form.csrf_token }}
 
-    {%if duplicate_found == True%}
-    <p>This image has already been added to the database!</p>
-    {% endif %}
+    {%for error in get_flashed_messages%}
+    <div class="errors">
+      <h2>{{message}}</h2>
+    </div>
+    {% endfor %}
 
     <input type="file" name="display-image" id="display-image" accept=".jpeg, .png", onchange="showPreview(event);">
     <br>

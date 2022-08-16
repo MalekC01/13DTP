@@ -1,38 +1,29 @@
-# from exif import Image
-
-# def exif_for_image(info_of_image):
-#     with open("/Users/malekconnor/Desktop/13DTP/static/image/uploads/_MG_3642.JPG", "rb") as photo_file:
-#         photo = Image(photo_file)
-
-#     image_tag_list = dir(photo)
-
-#     print("Focal length: " + str(photo.focal_length))
-#     print("Date taken: " + str(photo.datetime))
-#     print("Shutter speed: " + str(photo.exposure_time))
-#     print("Appeture: f/" + str(photo.f_number))
-
-    
-#     #"/static/image/" + str(info_of_image[0][1])
-#"/Users/malekconnor/Desktop/13DTP/static/images/" + str(info_of_image[0][1])
 import os
 from exif import Image
 import pathlib
 
 def exif_for_image(image_data):
-    file_name = image_data.url[8:]
+    try:
+        file_name = image_data.url[8:]
+        
+        path = pathlib.Path(file_name).parent.absolute()
     
-    path = pathlib.Path(file_name).parent.absolute()
- 
-    with open(str(path) + "/static/images/" + str(image_data.url), "rb") as photo_file:
-        photo = Image(photo_file)
+        with open(str(path) + "/static/images/" + str(image_data.url), "rb") as photo_file:
+            photo = Image(photo_file)
 
-    image_tag_list = dir(photo)
+        image_tag_list = dir(photo)
 
-    focal_length = photo.focal_length
-    date = photo.datetime
-    exposure = photo.exposure_time
-    f_stop = photo.f_number
-    data = [focal_length, date, exposure, f_stop]
+        data = {}
+        data['focal_length'] = photo.focal_length
+        data['date'] = photo.datetime
+        data['exposure_time'] = photo.exposure_time
+        data['aperture'] = photo.f_number
 
-    return data
+        return data
+    except:
+        data = None
+        return data
+
+
+    
 
