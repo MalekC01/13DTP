@@ -26,19 +26,42 @@
 
             <p><b>Apperture:</b> {{exif_data.aperture}}</p>
 
-            <p>{{ image_data.url }}</p>
         </div>
         {% else %}
         <p>This image does not have any exif data!</p>
         {% endif %}
 
+        {% if photo.tags != []%}
         <h3>Tags:</h3>
-        {% for tag_name in list_of_tags%}
-            <li>{{tag_name.tag_name}}</li>
+        {% for tag in photo.tags%}
+            <li>{{tag.tag_name}}</li>
         {% endfor %}
 
+        {% else %}
+        <p>This image doesnt have any tags associated.</p>
+        {% endif %}
 
+        {% if photo.locations.location_name != [] %}
+        <h3>Location:</h3>
+        <p>{{ photo.locations.location_name }}</p>
+        {% else %}
+        <p>This image doesnt have a location associated.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="edit_image_data">
         {% if logged_in %}
+        <h2>Edit Image Info:</h2>
+        
+        {% with messages = get_flashed_messages() %}  
+            {% if messages %}  
+            {% for message in messages %}  
+                <p>{{ message }}</p>  
+            {% endfor %}  
+            {% endif %}  
+        {% endwith %}  
+
         <form method="POST" action="" enctype="multipart/form-data">
 
         <p>Image orientation: {{form.orientation}}</p>
@@ -49,13 +72,16 @@
         <p>New location: <br> {{ form.new_location }} </p>
 
         <input type="submit" value="Submit">
+        <br>
+        <br>
 
         </form>
         {% endif %}
-
-
-
     </div>
+
+
+
+    
 
 
 

@@ -8,11 +8,6 @@
     <form method="POST" action="" enctype="multipart/form-data">
     {{ form.csrf_token }}
 
-    {%for error in get_flashed_messages%}
-    <div class="errors">
-      <h2>{{message}}</h2>
-    </div>
-    {% endfor %}
 
     <input type="file" name="display-image" id="display-image" accept=".jpeg, .png", onchange="showPreview(event);">
     <br>
