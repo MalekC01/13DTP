@@ -256,3 +256,13 @@ input[type=button], input[type=submit], input[type=reset] {
 .nav_login{
   float: right;
 }
+
+
+.photo_page_errors, .add_errors{
+  border: solid 2px red;
+  width: auto;
+}
+
+.photo_page_errors p, .add_errors p{
+  margin-left: 10px;
+}

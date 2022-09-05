@@ -71,7 +71,7 @@ def login():
                 return redirect('/')
             else:
                 # wrong password
-                flash("Passw  ord is incorrect try again!")  
+                flash("Password is incorrect try again!")  
         else:
             # username doen't exist
             flash("Username is incorrect try again!")  
@@ -171,8 +171,6 @@ def photo(id):
 
     else:
         
-        
-
         #ncea data from form
         ncea_level = form.ncea.data
         if ncea_level == "Level 2":
@@ -182,7 +180,6 @@ def photo(id):
         else:
             ncea_level = "Not NCEA"
 
-    
 
         #if new tag isnt empty add to database
         new_tag = form.new_tag.data
@@ -203,7 +200,7 @@ def photo(id):
                     found_new_tag_ids += find_new_tag_id
                     found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
                 else:
-                    flask("Duplicate tag found please select or try again!")
+                    flash("Duplicate tag found please select or try again!")
 
         #update query
         photo = models.Photo.query.filter_by(id=id).first()
@@ -238,10 +235,6 @@ def photo(id):
             photo.tags.append(add_tag)
         db.session.merge(photo)
         db.session.commit()
-
-
-
-
 
 
     return redirect(str("/photo/") + str(id))
@@ -295,8 +288,8 @@ def add_photo():
                     ncea_level = "Not NCEA"
 
                 #location data from form
-                locations_chosen = form.locations.data
                 new_location = form.new_location.data
+
                 #if new location tag isnt empty add to database
                 if new_location != '':
                     #change to if any instead of querying all
@@ -305,9 +298,12 @@ def add_photo():
                         add_location = models.Locations(location_name=new_location)
                         db.session.add(add_location)
                         db.session.commit()
+                    else:
+                        flash("New location added is a dupliacte try again!")
                     find_location_id = models.Locations.query.filter_by(location_name=new_location).all()
                     location_id_list = [(str(location.id)) for location in find_location_id]
                     location_id = location_id_list[0]
+
                 else:
                     location_id = form.locations.data
 
@@ -328,6 +324,8 @@ def add_photo():
                             find_new_tag_id = models.Tag.query.filter_by(tag_name=duplicate).all()
                             found_new_tag_ids += find_new_tag_id
                             found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
+                        else:
+                            flash("The new tag to be added is a dupliacte try again!")
                             
 
                 #add image with all data from form and image file 
@@ -347,8 +345,17 @@ def add_photo():
                     photo.tags.append(add_tag)
                     db.session.merge(photo)
                     db.session.commit()
+
+                #errors
+                if form.tags.data == None:
+                    flash("Tags section left empty fill all sections to proccede!")
+                if form.locations == None:
+                    flash("Locations section left empty fill all sections to proccede!")
+
+                
             else:
                 duplicate_found = True
+                flash("This image is a duplicate find a new one or try again!")
             return render_template('add.html', logged_in=logged_in, form=form, filename=filename, title="Add", duplicate_found=duplicate_found)
         return render_template('add.html', logged_in=logged_in, form=form, title="Add")
 

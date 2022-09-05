@@ -5,9 +5,17 @@
 <div class="add_form">
   <h2>Add image to website</h2>
 
+    <div class="add_errors">
+    {% with messages = get_flashed_messages() %}  
+      {% if messages %}  
+      {% for message in messages %}  
+          <p><b>{{ message }}</b></p>  
+      {% endfor %}  
+      {% endif %}  
+    {% endwith %}  
+    </div>
     <form method="POST" action="" enctype="multipart/form-data">
     {{ form.csrf_token }}
-
 
     <input type="file" name="display-image" id="display-image" accept=".jpeg, .png", onchange="showPreview(event);">
     <br>
@@ -17,25 +25,17 @@
 
     <p>Image orientation: {{form.orientation}}</p>
     <p>Ncea Level: {{ form.ncea }} </p>
-
     <p>Tags: <br> {{ form.tags }} </p>
     <p>New tag: <br> {{ form.new_tag(placeholder="Layout: 1, 2, 3")}} </p>
     <p>Locations: <br> {{ form.locations }} </p>
     <p>New location: <br> {{ form.new_location }} </p>
 
-
     <input type="submit" value="Submit">
 
   </form>
-
-
 </div>
 
-
-
 </body>
-
-
 <script>
 function showPreview(event){
   if(event.target.files.length > 0){
@@ -46,6 +46,5 @@ function showPreview(event){
   }
 }
 </script> 
-
 </html>
 {% endblock %}

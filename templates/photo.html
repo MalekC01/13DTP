@@ -54,13 +54,15 @@
         {% if logged_in %}
         <h2>Edit Image Info:</h2>
         
+        <div class="photo_page_errors">
         {% with messages = get_flashed_messages() %}  
             {% if messages %}  
             {% for message in messages %}  
-                <p>{{ message }}</p>  
+                <p><b>{{ message }}</b></p>  
             {% endfor %}  
             {% endif %}  
         {% endwith %}  
+        </div>
 
         <form method="POST" action="" enctype="multipart/form-data">
 
