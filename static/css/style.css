@@ -115,7 +115,7 @@ main{
 }
 
 .preview img{
-  width: 20%;
+  width: 50%;
   height: auto;
   border: 2px solid black;
   margin-top: 2%;
@@ -146,7 +146,7 @@ input[type=text] {
 }
 
 
-input[type=button], input[type=submit], input[type=reset] {
+input[type=button], input[type=submit], input[type=reset], input#username, input#password, button, input#file-upload-button {
   background-color: #1D1E2C;
   border: none;
   color: white;
@@ -226,12 +226,6 @@ input[type=button], input[type=submit], input[type=reset] {
   margin-left: 20px;
 }
 
-.info input[type=submit]{
-  border-radius: 5px;
-  border: 2px solid grey;
-  background-color: rgb(56, 56, 56);
-  padding: 8px;
-}
 
 .no_tags{
   border: solid 2px white;
@@ -265,4 +259,70 @@ input[type=button], input[type=submit], input[type=reset] {
 
 .photo_page_errors p, .add_errors p{
   margin-left: 10px;
+}
+
+.Login_Form{
+  border: solid 2px white;
+  width: 20%;
+  margin-top: 5%;
+  padding-bottom: 2%;
+}
+
+.Login_Form input#username, .Login_Form input#password{
+  width: 60%;
+}
+
+.login_error{
+  color: white;
+  border: solid 2px #fc3232;
+  background-color: #f70000;
+  width: 90%;
+}
+
+
+.ncea_preview{
+  display: inline-grid;
+  gap: 50px 300px;
+  grid-template-columns: auto auto;
+}
+
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 16px;
+  margin-top: -22px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a grey background color */
+.prev:hover, .next:hover {
+  background-color: #f1f1f1;
+  color: black;
+}
+
+.slideshow-container img{
+  width: 20%;
+  height: auto;
 }

@@ -5,15 +5,16 @@
 <div class="add_form">
   <h2>Add image to website</h2>
 
-    <div class="add_errors">
+    
     {% with messages = get_flashed_messages() %}  
       {% if messages %}  
       {% for message in messages %}  
+      <div class="add_errors">
           <p><b>{{ message }}</b></p>  
+      </div>
       {% endfor %}  
       {% endif %}  
     {% endwith %}  
-    </div>
     <form method="POST" action="" enctype="multipart/form-data">
     {{ form.csrf_token }}
 

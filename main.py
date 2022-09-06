@@ -77,7 +77,7 @@ def login():
             flash("Username is incorrect try again!")  
         return render_template('login.html', form=form)
 
-
+#<a href="/photo/{{level_2_images[0].id}}"><img src="/static/images/{{level_2_images[0].url}}"></a>
 def check_logged_in():
     if 'username' in session:
         return True
@@ -87,7 +87,9 @@ def check_logged_in():
 @app.route('/ncea', methods=['GET', 'POST'])
 def ncea():
     logged_in = check_logged_in()
-    return render_template('ncea.html', logged_in=logged_in)
+    level_2_images = models.Photo.query.filter_by(ncea=2, orientation="Portrait").all()
+    level_3_images = models.Photo.query.filter_by(ncea=3, orientation="Portrait").all()
+    return render_template('ncea.html', logged_in=logged_in, level_2_images=level_2_images, level_3_images=level_3_images)
 
 #all image to do with level 2 ncea
 @app.route("/level/<int:ncea>", methods=['GET', 'POST'])

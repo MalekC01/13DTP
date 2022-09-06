@@ -1,6 +1,6 @@
 {% extends 'layout.html' %} 
 {% block content %}
-
+<center>
 <div class="Login_Form">
 <form method="POST" action="" enctype="multipart/form-data">
 {% if logged_in %}
@@ -9,17 +9,24 @@
 
 {% if logged_in != True %}
 <h1>Login</h1>
+
 {% with messages = get_flashed_messages() %}  
 {% if messages %}  
     {% for message in messages %}  
+    <div class="login_error">
         <p>{{ message }}</p>  
+    </div>
+    <br>
     {% endfor %}  
 {% endif %}  
 {% endwith %}
+
 {{ form.username(placeholder="Username") }}
 <br>
 {{ form.password(placeholder="Password") }}
-</div>
+<br>
 <input type="submit" value="Submit">
+</div>
+</center>
 {% endif %}
 {% endblock %}
