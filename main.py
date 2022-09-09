@@ -163,80 +163,113 @@ def photo(id):
     exif_data = exif_for_image(photo)
 
     all_tags = models.Tag.query.all()
-    form.tags.choices = [(tag_name.id, str(tag_name.tag_name)) for tag_name in all_tags] 
+    form.tags.choices = [(tag_name.id, str(tag_name.tag_name)) for tag_name in all_tags]
+
+    tag_ids = []
+    for tag in photo.tags:
+        tag_ids.append(tag.id)
+    form.tags.default = tag_ids
+    form.ncea.default = str(photo.ncea)
+    print(photo.ncea)
+    form.locations.default = str(photo.location)
+    form.orientation.default = photo.orientation
+    form.process()
 
     list_of_locations = models.Location.query.all()
     form.locations.choices = [(location_name.id, str(location_name.location_name)) for location_name in list_of_locations] 
 
     if request.method=='GET':
+
         return render_template('photo.html', title="Info", form=form, photo=photo, exif_data=exif_data, logged_in=logged_in)
 
     else:
-        
-        #ncea data from form
-        ncea_level = form.ncea.data
-        if ncea_level == "Level 2":
-            ncea_level = "2"
-        elif ncea_level == "Level 3":
-            ncea_level = "3"
-        else:
-            ncea_level = "Not NCEA"
+    
+        has_data = True
 
 
-        #if new tag isnt empty add to database
-        new_tag = form.new_tag.data
-        found_new_tag_ids = []
-        if new_tag != '':
-            tags_formated = []
-            tags_formated = new_tag.split(", ")
-        
+        if form.tags.data == [] and form.new_tag.data == "":
+            flash("Tags field left empty!")
+            has_data = False
+        if form.orientation.data == None:
+            flash("Orientation field left empty!")
+            has_data = False
+        if form.ncea.data == None:
+            flash("Ncea field left empty!")
+            has_data = False
+        if form.locations.data == None and form.new_location.data == "":
+            flash("Locations field left empty!")
+            has_data = False
+
+
+
+        if has_data:
+            #ncea data from form
+            ncea_level = form.ncea.data
+            if ncea_level == "Level 2":
+                ncea_level = "2"
+            elif ncea_level == "Level 3":
+                ncea_level = "3"
+            else:
+                ncea_level = "Not NCEA"
+
+
+            #if new tag isnt empty add to database
+            new_tag = form.new_tag.data
             found_new_tag_ids = []
-            for duplicate in tags_formated:
-                check_tag_duplicate = models.Tag.query.filter_by(tag_name=duplicate).all()
-                if check_tag_duplicate == []:
-                    add_tag = models.Tag(tag_name=duplicate)
-                    db.session.add(add_tag)
+            if new_tag != '':
+                tags_formated = []
+                print(form.tags.data)
+                tags_formated = new_tag.split(", ")
+            
+                found_new_tag_ids = []
+                for duplicate in tags_formated:
+                    check_tag_duplicate = models.Tag.query.filter_by(tag_name=duplicate).all()
+                    if check_tag_duplicate == []:
+                        add_tag = models.Tag(tag_name=duplicate)
+                        db.session.add(add_tag)
+                        db.session.commit()
+
+                        find_new_tag_id = models.Tag.query.filter_by(tag_name=duplicate).all()
+                        found_new_tag_ids += find_new_tag_id
+                        found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
+                    else:
+                        flash("Duplicate tag found please select or try again!")
+
+            #update query
+            photo = models.Photo.query.filter_by(id=id).first()
+
+            #if no new location has been added
+            if form.new_location.data != "":
+                try:
+                    check_location_duplicate = models.Location.query.filter_by(location_name=form.new_location.data).first_or_404()
+                except:
+                    add_location = models.Location(location_name=form.new_location.data)
+                    db.session.add(add_location)
                     db.session.commit()
 
-                    find_new_tag_id = models.Tag.query.filter_by(tag_name=duplicate).all()
-                    found_new_tag_ids += find_new_tag_id
-                    found_new_tag_ids = [(str(tag.id)) for tag in found_new_tag_ids]
-                else:
-                    flash("Duplicate tag found please select or try again!")
-
-        #update query
-        photo = models.Photo.query.filter_by(id=id).first()
-
-        #if no new location has been added
-        if form.new_location.data != "":
-            try:
-                check_location_duplicate = models.Location.query.filter_by(location_name=form.new_location.data).first_or_404()
-            except:
-                add_location = models.Location(location_name=form.new_location.data)
-                db.session.add(add_location)
+                    find_id_of_new_location = models.Location.query.filter_by(location_name=form.new_location.data).first_or_404()
+                    photo.location = []
+                    photo.location = int(find_id_of_new_location.id)
+                    db.session.commit()
+            else:
+                photo.location = form.locations.data
                 db.session.commit()
 
-                find_id_of_new_location = models.Location.query.filter_by(location_name=form.new_location.data).first_or_404()
-                photo.location = []
-                photo.location = int(find_id_of_new_location.id)
-                db.session.commit()
-        else:
-            photo.location = form.locations.data
+            photo.orientation = form.orientation.data  
+            photo.ncea = ncea_level
+            photo.tags = []
+            db.session.merge(photo)
             db.session.commit()
 
-        photo.orientation = form.orientation.data  
-        photo.ncea = ncea_level
-        photo.tags = []
-        db.session.merge(photo)
-        db.session.commit()
+            list_of_tags = form.tags.data + found_new_tag_ids
 
-        list_of_tags = form.tags.data + found_new_tag_ids
+            for tag in list_of_tags:
+                add_tag = models.Tag.query.filter_by(id=int(tag)).first()
+                photo.tags.append(add_tag)
+            db.session.merge(photo)
+            db.session.commit()
 
-        for tag in list_of_tags:
-            add_tag = models.Tag.query.filter_by(id=int(tag)).first()
-            photo.tags.append(add_tag)
-        db.session.merge(photo)
-        db.session.commit()
+        
 
 
     return redirect(str("/photo/") + str(id))

@@ -8,7 +8,7 @@ class MultiCheckboxField(SelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 class Add_Photo(FlaskForm):
-    ncea = RadioField('ncea', choices=[('Level 2','Level 2'),('Level 3','Level 3'), ('Not for NCEA','Not for NCEA')], validators=[DataRequired()])
+    ncea = RadioField('ncea', choices=[('2','Level 2'),('3','Level 3'), ('Not NCEA','Not for NCEA')], validators=[DataRequired()])
     tags = MultiCheckboxField('tags')
     new_tag = TextField('new_tag')
     locations = RadioField('locations')
@@ -23,7 +23,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('password', validators=[DataRequired()])
 
 class EditPhotoInfo(FlaskForm):
-    ncea = RadioField('ncea', choices=[('Level 2','Level 2'),('Level 3','Level 3'), ('Not for NCEA','Not for NCEA')], validators=[DataRequired()])
+    ncea = RadioField('ncea', choices=[('2','Level 2'),('3','Level 3'), ('Not NCEA','Not for NCEA')], validators=[DataRequired()])
     tags = MultiCheckboxField('tags')
     new_tag = TextField('new_tag')
     locations = RadioField('locations')
