@@ -64,7 +64,8 @@ def login():
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('login.html', form=form)
     else:
-        check_username_exists = models.Users.query.filter_by(username=form.username.data).first()
+        username = form.username.data
+        check_username_exists = models.Users.query.filter_by(username=username.lower()).first()
         if check_username_exists != None:
             if str(form.password.data) == str(check_username_exists.password):
                 session['username'] = form.username.data
