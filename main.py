@@ -131,22 +131,31 @@ def gallery():
             tags_to_search = []
             for tag_ids in form.options.data:
                 chosen_tags = models.Tag.query.filter_by(id=tag_ids).all()
-                #images_that_fit_filter = [(str(tag.id)) for tag in chosen_tags]
-                tags_to_search.append(chosen_tags.id)
+                for tag_ids in chosen_tags:
+                    tags_to_search.append(tag_ids.id)
             
-            #uses tag ids to then find the images that contain that tag
+            # #uses tag ids to then find the images that contain that tag
+            # photo_ids = []
+            # for tag_id in tags_to_search[:len(tags_to_search)][0]:
+            #     search_for_photo_id = models.Photo.query.filter_by(tid=tag_id).all()
+            #     print(search_for_photo_id)
+            #     #image_id = [(str(image_id.pid)) for image_id in search_for_photo_id]
+            #     photo_ids.append(search_for_photo_id.id)
+
             photo_ids = []
-            for tag_id in tags_to_search[:len(tags_to_search)][0]:
-                search_for_photo_id = models.Photo_tag.query.filter_by(tid=tag_id).all()
-                #image_id = [(str(image_id.pid)) for image_id in search_for_photo_id]
-                photo_ids.append(search_for_photo_id.id)
-            
-    
+            #print(tags_to_search)
+            for tag in tags_to_search:
+                search_tags = models.Tag.query.filter_by(id=tag).first()
+                for each_tag in search_tags.photos:
+                    photo_ids.append(int(each_tag.id))
+                    
+
             #uses all image ids for tags selected then get url so can be displayed
             urls = []
-            for data in photo_ids:
-                search_for_photo_url = models.Photo.query.filter_by(id=data).all()
-                urls.append(image_url.id, image_url.url)
+            for image_id in photo_ids:
+                print(image_id)
+                search_for_photo_url = models.Photo.query.filter_by(id=image_id).first()
+                urls.append((search_for_photo_url.id, search_for_photo_url.url))
             #randomises order to be displayed
             random.shuffle(urls)
 
@@ -165,15 +174,15 @@ def photo(id):
     all_tags = models.Tag.query.all()
     form.tags.choices = [(tag_name.id, str(tag_name.tag_name)) for tag_name in all_tags]
 
-    tag_ids = []
-    for tag in photo.tags:
-        tag_ids.append(tag.id)
-    form.tags.default = tag_ids
-    form.ncea.default = str(photo.ncea)
-    print(photo.ncea)
-    form.locations.default = str(photo.location)
-    form.orientation.default = photo.orientation
-    form.process()
+    # tag_ids = []
+    # for tag in photo.tags:
+    #     tag_ids.append(tag.id)
+    # form.tags.default = tag_ids
+    # form.ncea.default = str(photo.ncea)
+    # print(photo.ncea)
+    # form.locations.default = str(photo.location)
+    # form.orientation.default = photo.orientation
+    # form.process()
 
     list_of_locations = models.Location.query.all()
     form.locations.choices = [(location_name.id, str(location_name.location_name)) for location_name in list_of_locations] 
