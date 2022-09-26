@@ -1,15 +1,15 @@
-{% extends 'layout.html' %} 
-{% block content %}
+{%extends 'layout.html' %}
+{%block content%}
 <center>
-<div class="Login_Form">
+<div class="register">
 <form method="POST" action="" enctype="multipart/form-data">
-
-<h1>Login</h1>
+<h1>Register</h1>
 {% if logged_in == True %}
 
 <p>You are already logged in!</p>
 
 {% else %}
+<p>To register you must know the key!</p>
 {% with messages = get_flashed_messages() %}  
 {% if messages %}  
     {% for message in messages %}  
@@ -20,16 +20,18 @@
     {% endfor %}  
 {% endif %}  
 {% endwith %}
-
+{% endif %}  
 {{ form.username(placeholder="Username") }}
 <br>
 {{ form.password(placeholder="Password") }}
 <br>
+{{ form.password_check(placeholder="Password Check") }}
+<br>
+{{ form.key(placeholder="Admin key")}}
+<br>
 <input type="submit" value="Submit">
-
-<a href="/register"><p>Register as an admin</p></a>
-
+</form>
 </div>
 </center>
-{% endif %}
+
 {% endblock %}

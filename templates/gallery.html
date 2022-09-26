@@ -32,7 +32,7 @@
         {% if image_url != [] %}
         {% for picture in image_url %}
         <div id="grid">
-            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[0][1]}}"></a>
+            <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
         </div>
         {% endfor %}
         {% else %}
@@ -57,7 +57,7 @@ function filterfunction() {
 </script>
 
 
-<script>
+<!-- <script>
     var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
         sURLVariables = sPageURL.split('&'),
@@ -78,8 +78,9 @@ function filterfunction() {
     console.log(options);
     $("#options").attr("checked",options.indexOf("options") !== -1);
 
-   
-</script>
+    console.log('triggered');
+
+</script> -->
 {% endblock %}
 
 

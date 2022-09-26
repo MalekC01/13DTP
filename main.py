@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import insert, update, delete
 from config import Config
 import random
+import hashlib
+import re
 
 
 app = Flask(__name__)
@@ -21,9 +23,10 @@ from image_exif import exif_for_image
 #error messages
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 WTF_CSRF_ENABLED = True
-WTF_CSRF_SECRET_KEY = 'passoword'
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+WTF_CSRF_SECRET_KEY = 'password'
+app.config['UPLOAD_EXTENSIONS'] = ['.gif']
 app.config['UPLOAD_PATH'] = 'static/images/uploads'
+app.config['MAX_CONTENT_LENGTH'] =  16 * 1024 * 1024
 
 
 #Logs out after 5 mins 
@@ -38,6 +41,20 @@ def before_request():
 def page_not_found(e):
     logged_in = check_logged_in()
     return render_template('error.html', logged_in=logged_in), 404
+
+#if image is to large
+@app.errorhandler(413)
+def too_large(e):
+    flash("File is to large choose a smaller one!")
+    return redirect('/add')
+
+@app.errorhandler(400)
+def wrong_extention(e):
+    flash("This image type is not supported!")
+    return redirect('/add')
+
+
+
 
 #home page route
 @app.route('/', methods=['GET', 'POST'])
@@ -61,15 +78,22 @@ def logout():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = forms.LoginForm()
+    logged_in = check_logged_in()
     if request.method=='GET':  # did the browser ask to see the page
-        return render_template('login.html', form=form)
+        return render_template('login.html', form=form, logged_in=logged_in)
     else:
         username = form.username.data
         check_username_exists = models.Users.query.filter_by(username=username.lower()).first()
         if check_username_exists != None:
-            if str(form.password.data) == str(check_username_exists.password):
+
+            pre_hashed = bytes(form.password.data, 'utf-8')
+            hashed_password = int.from_bytes(
+            hashlib.sha256(pre_hashed).digest()[:8], 'little')
+
+            if hashed_password == check_username_exists.password:
                 session['username'] = form.username.data
                 return redirect('/')
+                
             else:
                 # wrong password
                 flash("Password is incorrect try again!")  
@@ -77,6 +101,57 @@ def login():
             # username doen't exist
             flash("Username is incorrect try again!")  
         return render_template('login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = forms.RegisterForm()
+    logged_in = check_logged_in()
+    if request.method=='GET':  # did the browser ask to see the page
+        return render_template('register.html', form=form)
+    else:
+        username = form.username.data
+        #check username doesnt exist 
+        check_username_exists = models.Users.query.filter_by(username=username.lower()).first()
+        if check_username_exists != None:
+            flash("This username is already taken please try again!")
+        else:
+            #check passwords match
+            if form.password.data == form.password_check.data:
+                #check no anyone can sign up must know admin code
+                if form.key.data == "Secret Code":
+                    #makes sure length of password string doesnt exceed 12 characters
+                    length_check = len(form.password.data)
+
+                    if length_check < 12 and length_check > 0:
+
+                        # list of special characters to compare against
+                        string_check = re.compile('[@_!# $%^&*()<>?/\|}{~:]')
+                        #does not include special characters 
+                        if (string_check.search(form.password.data) == None):
+
+                            pre_hashed = bytes(form.password.data, 'utf-8')
+                            hashed_password = int.from_bytes(
+                                hashlib.sha256(pre_hashed).digest()[:8], 'little')
+                            print(hashed_password)
+                            
+                            register_user = models.Users(username=form.username.data, password=hashed_password)
+                            db.session.add(register_user)
+                            db.session.commit()
+
+                            session['username'] = form.username.data
+                            return redirect('/')
+
+                        else:
+                            flash("Passwords may not include special characters try again!")
+                    else:
+                        flash("Password longer than 12 characters!")
+                else:
+                    flash("Admin code was incorrect!")
+            else:
+                flash("The passwords didnt match. Try again!")
+             
+        return render_template('login.html', form=form)
+    
 
 #<a href="/photo/{{level_2_images[0].id}}"><img src="/static/images/{{level_2_images[0].url}}"></a>
 def check_logged_in():
@@ -118,6 +193,10 @@ def gallery():
     #shuffles list indexes so each time page is refreshed order of images will change
     id_url = [(str(url.id), url.url, url.orientation) for url in url_of_all_images]
     random.shuffle(id_url)
+
+    landscape_gallery = models.Photo.query.filter_by(orientation="Landscape").all()
+    portrait_gallery = models.Photo.query.filter_by(orientation="Portrait").all()
+    
     
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('gallery.html', id_url=id_url, form=form, display_all=display_all, logged_in=logged_in, url_of_all_images=url_of_all_images)
@@ -135,13 +214,6 @@ def gallery():
                 for tag_ids in chosen_tags:
                     tags_to_search.append(tag_ids.id)
             
-            # #uses tag ids to then find the images that contain that tag
-            # photo_ids = []
-            # for tag_id in tags_to_search[:len(tags_to_search)][0]:
-            #     search_for_photo_id = models.Photo.query.filter_by(tid=tag_id).all()
-            #     print(search_for_photo_id)
-            #     #image_id = [(str(image_id.pid)) for image_id in search_for_photo_id]
-            #     photo_ids.append(search_for_photo_id.id)
 
             photo_ids = []
             #print(tags_to_search)
@@ -159,6 +231,8 @@ def gallery():
                 urls.append((search_for_photo_url.id, search_for_photo_url.url))
             #randomises order to be displayed
             random.shuffle(urls)
+
+            
 
             return render_template('gallery.html', form=form, image_url=urls, display_all=display_all, logged_in=logged_in, url_of_all_images=url_of_all_images)
 
@@ -307,19 +381,34 @@ def add_photo():
     if request.method=='GET':  # did the browser ask to see the page
         return render_template('add.html', logged_in=logged_in, form=form)
     else:  # its a POST, ie: the user clicked SUBMIT
+        print("first")
         if form.validate_on_submit():
+            print("second")
             #uplaoding image to local files
+            print("third")
             uploaded_file = request.files['display-image']
+
             filename = uploaded_file.filename
+
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in app.config['UPLOAD_EXTENSIONS'] or \
+                file_ext != validate_image(uploaded_file.stream):
+                flash("Wrong extention!")
+                return redirect("/add")
+
+
             uploaded_file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
             photo_url = str( "uploads/" + filename)
 
-            #check image hasnt already been uploaded
-            check_duplicate_photo = models.Photo.query.filter_by(url=photo_url).all()
-            duplicate_found = False
 
+
+            #check image hasnt already been uploaded
+            
+            check_duplicate_photo = models.Photo.query.filter_by(url=photo_url).first()
+            print("Check duplicate: " + str(check_duplicate_photo))
+            
             #if no duplicate image has been found add to database
-            if check_duplicate_photo == []:
+            if check_duplicate_photo == None:
                 #Take ncea input from form and get ready to be inputted into database
                 orientation = form.orientation.data
 
@@ -385,6 +474,7 @@ def add_photo():
                 tag_id_list = form.tags.data + found_new_tag_ids
                 print("tags to add to image: " + str(tag_id_list))
                 
+                photo = models.Photo.query.filter_by(url=photo_url).first()
                 for tag in form.tags.data:
                     add_tag = models.Tag.query.filter_by(id=int(tag)).first()
                     photo.tags.append(add_tag)
@@ -401,7 +491,7 @@ def add_photo():
             else:
                 duplicate_found = True
                 flash("This image is a duplicate find a new one or try again!")
-            return render_template('add.html', logged_in=logged_in, form=form, filename=filename, title="Add", duplicate_found=duplicate_found)
+            return render_template('add.html', logged_in=logged_in, form=form, filename=filename, title="Add")
         return render_template('add.html', logged_in=logged_in, form=form, title="Add")
 
 #runs port on local site

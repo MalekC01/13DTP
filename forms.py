@@ -22,6 +22,13 @@ class LoginForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])
 
+class RegisterForm(FlaskForm):
+    username = StringField('username', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    password_check = PasswordField('password', validators=[DataRequired()])
+    key = StringField('key', validators=[DataRequired()])
+    
+
 class EditPhotoInfo(FlaskForm):
     ncea = RadioField('ncea', choices=[('2','Level 2'),('3','Level 3'), ('Not NCEA','Not for NCEA')], validators=[DataRequired()])
     tags = MultiCheckboxField('tags')

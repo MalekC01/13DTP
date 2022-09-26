@@ -146,7 +146,7 @@ input[type=text] {
 }
 
 
-input[type=button], input[type=submit], input[type=reset], input#username, input#password, button, input#file-upload-button {
+input[type=button], input[type=submit], input[type=reset], input#username, input#password, .register input#key, .register input#password_check, button, input#file-upload-button {
   background-color: #1D1E2C;
   border: none;
   color: white;
@@ -261,14 +261,14 @@ input[type=button], input[type=submit], input[type=reset], input#username, input
   margin-left: 10px;
 }
 
-.Login_Form{
+.Login_Form, .register{
   border: solid 2px white;
   width: 20%;
   margin-top: 5%;
   padding-bottom: 2%;
 }
 
-.Login_Form input#username, .Login_Form input#password{
+.Login_Form input#username, .Login_Form input#password, .register input#password, .register input#key, .register input#username, .register input#password_check, input#submit{
   width: 60%;
 }
 
