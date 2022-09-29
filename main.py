@@ -11,6 +11,7 @@ import random
 import hashlib
 import re
 import copy
+import autopep8
 
 
 app = Flask(__name__)
@@ -51,6 +52,7 @@ def check_logged_in():
     if 'username' in session:
         return True
     return False
+
 
 # sends error redirects to error page
 @app.errorhandler(404)
@@ -263,7 +265,6 @@ def gallery():
         else:
             image_url = None
             display_all = False
-
             list_of_tags = []
 
             # takes all tags selected in filter form and queries for the ids
