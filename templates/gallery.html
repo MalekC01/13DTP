@@ -15,7 +15,16 @@
         </div>
         </form>
     </div>
+    {% if list_of_tags == [] %}
+    {% else %}
+    <p>Current filters: </p>
+    {% for tag in list_of_tags %}
+    <li>{{tag}}</li>
+    {% endfor %}
+    {% endif %}
 </div>
+
+
 
 <div class="gallery">
 
@@ -30,11 +39,12 @@
 {% if display_all == False%}
     
         {% if image_url != [] %}
-        {% for picture in image_url %}
         <div id="grid">
+        {% for picture in image_url %}
+        
             <a class="link_info" href="/photo/{{picture[0]}}"><img src="/static/images/{{picture[1]}}"></a>
-        </div>
         {% endfor %}
+        </div>
         {% else %}
         <div class="no_tags">
             <h2>There are currently no images with tag(s) selected. Try again with differnt tags.</h2>
@@ -56,31 +66,6 @@ function filterfunction() {
 }
 </script>
 
-
-<!-- <script>
-    var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
-    
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-        
-        if (sParameterName[0] === sParam) {
-        return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-        }
-    }
-    return false;
-    };
-
-    var options = getUrlParameter('options');
-    console.log(options);
-    $("#options").attr("checked",options.indexOf("options") !== -1);
-
-    console.log('triggered');
-
-</script> -->
 {% endblock %}
 
 

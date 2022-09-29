@@ -15,7 +15,7 @@
     <div class="information_of_image">
         
         
-        <h1>Info</h1>
+        <h1>Photo Data</h1>
         {% if exif_data != None%}
         <div class="setting_grid">
             <p><b>Focal Length:</b> {{exif_data.focal_length}}</p>
@@ -25,33 +25,42 @@
             <p><b>Exposure Length:</b> {{exif_data.exposure_time}}s</p>
 
             <p><b>Apperture:</b> {{exif_data.aperture}}</p>
-
+            
         </div>
         {% else %}
         <p>This image does not have any exif data!</p>
         {% endif %}
 
-        {% if photo.tags != []%}
-        <h3>Tags:</h3>
-        {% for tag in photo.tags%}
-            <li>{{tag.tag_name}}</li>
-        {% endfor %}
+        <div class="location_tags_grid">
+        <div class="tag_list"></div>
+            {% if photo.tags != []%}
+            <h3>Tags:</h3>
+            {% for tag in photo.tags%}
+                <li>{{tag.tag_name}}</li>
+            {% endfor %}
+            
+            {% else %}
+            <p>This image doesnt have any tags associated.</p>
+            {% endif %}
+        </div>
 
-        {% else %}
-        <p>This image doesnt have any tags associated.</p>
-        {% endif %}
+        <div class="location_data">
+            {% if photo.locations.location_name != [] %}
+            <h3>Location:</h3>
+            <p>{{ photo.locations.location_name }}</p>
+            {% else %}
+            <p>This image doesnt have a location associated.</p>
+            {% endif %}
+        </div>
 
-        {% if photo.locations.location_name != [] %}
-        <h3>Location:</h3>
-        <p>{{ photo.locations.location_name }}</p>
-        {% else %}
-        <p>This image doesnt have a location associated.</p>
-        {% endif %}
+        </div>
 
     </div>
 
+    {% if logged_in %} 
     <div class="edit_image_data">
-        {% if logged_in %}
+        
+
         <h2>Edit Image Info:</h2>
         
         

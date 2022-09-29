@@ -117,7 +117,6 @@ main{
 .preview img{
   width: 50%;
   height: auto;
-  border: 2px solid black;
   margin-top: 2%;
 
 }
@@ -135,7 +134,13 @@ main{
   margin-bottom:5px; /* to match column gap */
 }
 
-
+.edit_image_data{
+  border: 2px solid white;
+  width: 30%;
+  margin-left: 3.5%;
+  padding: 15px;
+  margin-bottom: 5%;
+}
 
 input[type=text] {
   border: none;
@@ -282,8 +287,9 @@ input[type=button], input[type=submit], input[type=reset], input#username, input
 
 .ncea_preview{
   display: inline-grid;
-  gap: 10px 10px;
+  gap: 5px 5px;
   grid-template-columns: auto auto;
+  margin-bottom: 5%;
 }
 
 

@@ -16,15 +16,22 @@
 
 <div class="slideshow-container">
   <div class="mySlides1">
-    <a href="/level/2"><img src="/static/images/{{level_2_images[0].url}}"></a>
+    <a href="/level/2"><img src="/static/images/{{level_2_slide[0][1]}}"></a>
   </div>
 
   <div class="mySlides1">
-    <a href="/level/2"><img src="/static/images/{{level_2_images[0].url}}"></a>
+    <a href="/level/2"><img src="/static/images/{{level_2_slide[1][1]}}"></a>
   </div>
 
   <div class="mySlides1">
-    <a href="/level/2"><img src="/static/images/{{level_2_images[0].url}}"></a>
+    <a href="/level/2"><img src="/static/images/{{level_2_slide[2][1]}}"></a>
+  </div>
+
+  <div style="text-align:center">
+    <span class="dot" onclick="currentSlide(1)"></span>
+    <span class="dot" onclick="currentSlide(2)"></span>
+    <span class="dot" onclick="currentSlide(3)"></span>
+
   </div>
 
 </div>
@@ -32,17 +39,24 @@
 
 <div class="slideshow-container">
   <div class="mySlides2">
-    <a href="/level/3"><img src="/static/images/{{level_2_images[0].url}}"></a>
+    <a href="/level/3"><img src="/static/images/{{level_3_slide[0][1]}}"></a>
   </div>
 
   <div class="mySlides2">
-    <a href="/level/3"><img src="/static/images/{{level_2_images[0].url}}"></a>
+    <a href="/level/3"><img src="/static/images/{{level_3_slide[1][1]}}"></a>
   </div>
 
   <div class="mySlides2">
-    <a href="/level/3"><img src="/static/images/{{level_2_images[0].url}}"></a>
+    <a href="/level/3"><img src="/static/images/{{level_3_slide[2][1]}}"></a>
   </div>
 
+
+  <div style="text-align:center">
+    <span class="dot" onclick="currentSlide(1)"></span>
+    <span class="dot" onclick="currentSlide(2)"></span>
+    <span class="dot" onclick="currentSlide(3)"></span>
+  
+  </div>
 </div>
 
 
@@ -50,28 +64,49 @@
 </table>
 </center>
 
-<script>
-  let slideIndex = [1,1];
-  let slideId = ["mySlides1", "mySlides2"]
-  showSlides(1, 0);
-  showSlides(1, 1);
-  
-  function plusSlides(n, no) {
-    showSlides(slideIndex[no] += n, no);
-  }
-  
-  function showSlides(n, no) {
-    let i;
-    let x = document.getElementsByClassName(slideId[no]);
-    if (n > x.length) {slideIndex[no] = 1}    
-    if (n < 1) {slideIndex[no] = x.length}
-    for (i = 0; i < x.length; i++) {
-       x[i].style.display = "none";  
-    }
-    x[slideIndex[no]-1].style.display = "block";  
-  }
 
+<script>
+  let slideIndex = 0;
+  showSlides1();
   
+  function showSlides1() {
+    let i;
+    let slides = document.getElementsByClassName("mySlides1");
+    let dots = document.getElementsByClassName("dot");
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}    
+    for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex-1].style.display = "block";  
+    dots[slideIndex-1].className += " active";
+    setTimeout(showSlides1, 4000); // Change image every 2 seconds
+  }
+  </script>
+
+<script>
+  let slideIndex2 = 0;
+  showSlides2();
+  
+  function showSlides2() {
+    let i;
+    let slides = document.getElementsByClassName("mySlides2");
+    let dots = document.getElementsByClassName("dot");
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}    
+    for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex-1].style.display = "block";  
+    dots[slideIndex-1].className += " active";
+    setTimeout(showSlides2, 4000); // Change image every 2 seconds
+  }
   </script>
 
 
