@@ -2,6 +2,7 @@
 {% block content %}
 
 {% if random_index != None %}
+<div class="home">
 <div class="slideshow-container">
     <center>
         <!-- Full-width images with number and caption text -->
@@ -21,7 +22,7 @@
         </div>
     
     
-      </center>
+     
 
       </div>
       <br>
@@ -33,8 +34,20 @@
         <span class="dot" onclick="currentSlide(3)"></span>
 
       </div>
-{% endif %}
 
+      <center>
+      <div class="blurb">
+      <h1>About</h1>
+      <p>This project was designed and created by me. 
+        The purpose of my website is to have a place for myself and others to be able to efficiently view and find out information about images I have taken. 
+        This is useful for me as it is a much easier way to file my photos in a way that is always easily accessible so that I am able to filter my images instead of sorting through huge amounts of photos within folders on my hard drive. 
+        For other potential users whether it be friends or family that I want to be able to show my new images or someone else who could potentially be interested in viewing my images it allows them to view the images at any time rather than me having to manually find and send my images to them. 
+        This project was created for the purpose of it being much easier to view my images as I was tired of having to sort through hundreds of photos and folders. <a href="/gallery">To access the gallery click <b><u>here</u></b>.</a><a href="/ncea"> To see all NCEA images click <b><u>here</u></b>.</a></p>
+      </center>
+      </div>
+    </div>
+
+      {% endif %}
 
 
 <script>
@@ -59,6 +72,6 @@
   }
   </script>
 
-        </center>
+ 
 
 {% endblock %}

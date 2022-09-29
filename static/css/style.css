@@ -277,6 +277,20 @@ input[type=button], input[type=submit], input[type=reset], input#username, input
   width: 60%;
 }
 
+.home{
+  margin-top: 2%;
+}
+.blurb{
+  font-size: 20px;
+  width: 50%;
+  margin-bottom: 5%;
+}
+
+.blurb p{
+  text-align: justify;
+}
+
+
 .login_error{
   color: white;
   border: solid 2px #fc3232;

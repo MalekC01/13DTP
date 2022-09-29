@@ -10,6 +10,7 @@ from config import Config
 import random
 import hashlib
 import re
+import copy
 
 
 app = Flask(__name__)
@@ -52,8 +53,6 @@ def check_logged_in():
     return False
 
 # sends error redirects to error page
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     logged_in = check_logged_in()
@@ -179,8 +178,6 @@ def register():
 
 
 # page for all ncea images
-
-
 @app.route('/ncea', methods=['GET', 'POST'])
 def ncea():
     logged_in = check_logged_in()
@@ -308,6 +305,7 @@ def gallery():
 
 @app.route('/photo/<int:id>', methods=['GET', 'POST'])
 def photo(id):
+    
     form = forms.EditPhotoInfo()
     logged_in = check_logged_in()
 
@@ -327,6 +325,7 @@ def photo(id):
     form.locations.choices = [(location_name.id, str(
         location_name.location_name)) for location_name in list_of_locations]
 
+
     if request.method == 'GET':
 
         return render_template(
@@ -335,10 +334,9 @@ def photo(id):
             form=form,
             photo=photo,
             exif_data=exif_data,
-            logged_in=logged_in)
+            logged_in=logged_in,)
 
     else:
-
         has_data = True
 
         # rasies error so user knows reason for form not being submitted

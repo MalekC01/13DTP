@@ -5,6 +5,7 @@
     <a href="/gallery"><img src="/static/images/Icons/arrow_back_FILL0_wght700_GRAD200_opsz20.png" class="invert"><b> Back To Gallery</b></a>
 </div>
 
+
 <div class="info_grid">
 
 
@@ -18,13 +19,13 @@
         <h1>Photo Data</h1>
         {% if exif_data != None%}
         <div class="setting_grid">
-            <p><b>Focal Length:</b> {{exif_data.focal_length}}</p>
+            <p><b>Focal Length:</b> {{exif_data.focal_length}}mm</p>
 
             <p><b>Date:</b> {{exif_data.date}}</p>
 
             <p><b>Exposure Length:</b> {{exif_data.exposure_time}}s</p>
 
-            <p><b>Apperture:</b> {{exif_data.aperture}}</p>
+            <p><b>Aperture:</b> {{exif_data.aperture}}</p>
             
         </div>
         {% else %}
@@ -56,6 +57,8 @@
         </div>
 
     </div>
+
+    
 
     {% if logged_in %} 
     <div class="edit_image_data">
